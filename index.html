@@ -7,6 +7,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <style>
@@ -211,6 +212,20 @@
             color: #111827;
         }
 
+
+
+        .brand-icon {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .contact-icon .brand-icon {
+            width: 20px;
+            height: 20px;
+        }
+
         .footer-contact-link {
             display: inline-flex;
             align-items: center;
@@ -220,6 +235,14 @@
 
         .footer-contact-link:hover {
             transform: translateY(-2px);
+        }
+
+        .footer-contact-link i {
+            font-size: 1rem;
+        }
+
+        .contact-icon i {
+            font-size: 1.15rem;
         }
 
         /* لون خفيف للشريط عند النزول */
@@ -386,17 +409,17 @@
         <!-- استبدل رقم الواتس واسم حساب الإنستغرام ببياناتك -->
         <div class="flex flex-wrap justify-center items-center gap-5 md:gap-8 mb-10 text-sm">
             <a href="mailto:studiooms3@gmail.com" class="footer-contact-link text-gray-300 hover:text-white">
-                <span aria-hidden="true">✉</span>
+                <i class="fa-regular fa-envelope" aria-hidden="true"></i>
                 <span>studiooms3@gmail.com</span>
             </a>
 
             <a href="https://instagram.com/om1sf" target="_blank" rel="noopener noreferrer" class="footer-contact-link text-gray-300 hover:text-white">
-                <span aria-hidden="true">◎</span>
+                <i class="fa-brands fa-instagram" aria-hidden="true"></i>
                 <span>@om1sf</span>
             </a>
 
             <a href="https://wa.me/60143009203" target="_blank" rel="noopener noreferrer" class="footer-contact-link text-gray-300 hover:text-white">
-                <span aria-hidden="true">◉</span>
+                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
                 <span data-i18n="whatsapp_label">واتساب</span>
             </a>
         </div>
@@ -421,7 +444,7 @@
 
             <div class="space-y-3">
                 <a href="https://wa.me/60143009203" target="_blank" rel="noopener noreferrer" class="contact-link-card">
-                    <span class="contact-icon" aria-hidden="true">◉</span>
+                    <span class="contact-icon" aria-hidden="true"><i class="fa-brands fa-whatsapp"></i></span>
                     <span>
                         <span data-i18n="popup_whatsapp" class="block text-sm font-bold text-gray-900">تواصل عبر واتساب</span>
                         <span data-i18n="popup_whatsapp_sub" class="block text-xs text-gray-500 mt-1">ابدأ محادثة مباشرة معنا</span>
@@ -429,7 +452,7 @@
                 </a>
 
                 <a href="https://instagram.com/om1sf" target="_blank" rel="noopener noreferrer" class="contact-link-card">
-                    <span class="contact-icon" aria-hidden="true">◎</span>
+                    <span class="contact-icon" aria-hidden="true"><i class="fa-brands fa-instagram"></i></span>
                     <span>
                         <span data-i18n="popup_instagram" class="block text-sm font-bold text-gray-900">زور حسابنا في إنستغرام</span>
                         <span class="block text-xs text-gray-500 mt-1">@om1sf</span>
@@ -437,7 +460,7 @@
                 </a>
 
                 <a href="mailto:studiooms3@gmail.com" class="contact-link-card">
-                    <span class="contact-icon" aria-hidden="true">✉</span>
+                    <span class="contact-icon" aria-hidden="true"><i class="fa-regular fa-envelope"></i></span>
                     <span>
                         <span data-i18n="popup_email" class="block text-sm font-bold text-gray-900">راسلنا عبر البريد الإلكتروني</span>
                         <span class="block text-xs text-gray-500 mt-1">studiooms3@gmail.com</span>
