@@ -21,6 +21,14 @@
         html[dir="ltr"] body { font-family: 'Playfair Display', serif; }
         .font-serif-en { font-family: 'Playfair Display', serif; }
 
+        /* OMS brand logo variants */
+        .brand-logo { display: block; width: 100%; height: auto; object-fit: contain; }
+        .nav-brand-logo { width: 138px; max-height: 46px; }
+        .hero-brand-logo { width: min(78vw, 390px); margin-inline: auto; margin-bottom: 20px; }
+        .section-brand-logo { width: min(56vw, 230px); margin-inline: auto; margin-bottom: 18px; }
+        .footer-brand-logo { width: min(58vw, 250px); margin-inline: auto; margin-bottom: 22px; }
+        .popup-brand-logo { width: 150px; margin-bottom: 12px; }
+
         /* مساحة إضافية حتى لا يغطي الشريط العلوي بداية القسم عند الانتقال */
         section, header { scroll-margin-top: 88px; }
 
@@ -258,7 +266,9 @@
 
     <!-- القائمة العلوية -->
     <nav id="mainNav" class="fixed w-full z-50 py-5 px-6 md:px-8 flex justify-between items-center text-white transition duration-300">
-        <a href="#home" class="text-2xl font-bold font-serif-en tracking-widest internal-link">OMS.</a>
+        <a href="#home" class="internal-link" aria-label="OMS Studio home">
+            <img src="assets/branding/oms-studio-champagne-gold.png" alt="OMS Studio" class="brand-logo nav-brand-logo">
+        </a>
 
         <div class="hidden md:flex gap-6 lg:gap-8 text-sm tracking-wide items-center">
             <a href="#home" data-i18n="nav_home" class="internal-link hover:text-gray-300 transition">الشاشة الرئيسية</a>
@@ -283,6 +293,7 @@
         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/40"></div>
 
         <div class="relative z-10 max-w-4xl mx-auto" data-aos="zoom-in" data-aos-duration="1000">
+            <img src="assets/branding/oms-studio-champagne-gold.png" alt="OMS Studio" class="brand-logo hero-brand-logo">
             <p data-i18n="hero_label" class="text-xs md:text-sm text-gray-300 tracking-[0.35em] mb-5 uppercase">
                 Photography Studio
             </p>
@@ -304,6 +315,7 @@
     <!-- الأعمال -->
     <section id="works" class="py-20 px-6 max-w-6xl mx-auto">
         <div class="text-center mb-16" data-aos="fade-up">
+            <img src="assets/branding/oms-studio-matte-black.png" alt="OMS Studio" class="brand-logo section-brand-logo">
             <h2 data-i18n="selected_works" class="text-4xl font-bold mb-3 font-serif-en">أعمال مختارة</h2>
             <p data-i18n="works_subtitle" class="text-gray-500 text-lg">كل صورة تروي قصة.</p>
         </div>
@@ -403,6 +415,7 @@
 
     <!-- التواصل -->
     <footer id="contact" class="bg-black text-white text-center py-16">
+        <img src="assets/branding/oms-studio-champagne-gold.png" alt="OMS Studio" class="brand-logo footer-brand-logo">
         <h2 data-i18n="contact_title" class="text-3xl font-serif-en mb-5">دعنا نصنع الإبداع معاً</h2>
         <p data-i18n="contact_subtitle" class="text-gray-500 mb-8">تواصل معنا عبر القناة المناسبة لك</p>
 
@@ -432,6 +445,7 @@
         <div class="contact-popup-panel" role="dialog" aria-modal="true" aria-labelledby="contactPopupTitle">
             <div class="flex justify-between items-start gap-4 mb-7">
                 <div>
+                    <img src="assets/branding/oms-studio-matte-black.png" alt="OMS Studio" class="brand-logo popup-brand-logo">
                     <p data-i18n="popup_label" class="text-xs text-gray-400 tracking-[0.24em] uppercase mb-2">OMS Studio</p>
                     <h2 id="contactPopupTitle" data-i18n="popup_title" class="text-2xl font-bold text-gray-900">احجز جلستك</h2>
                     <p data-i18n="popup_desc" class="text-sm text-gray-500 mt-2">اختر طريقة التواصل المناسبة لك</p>
