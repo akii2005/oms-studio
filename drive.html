@@ -4,125 +4,499 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OMS Archive | الأرشيف</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: 'Alexandria', sans-serif; background-color: #f0f2f5; transition: all 0.3s ease; }
-        html[dir="ltr"] body { font-family: 'Playfair Display', serif; }
-        .folder-card:hover { background-color: #e2e8f0; transform: translateY(-2px); }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Alexandria', sans-serif;
+            background-color: #f4f5f7;
+            transition: all 0.3s ease;
+        }
+
+        html[dir="ltr"] body {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .font-serif-en {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .media-card {
+            overflow: hidden;
+            border-radius: 18px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+        }
+
+        .media-card:hover {
+            transform: translateY(-4px);
+            border-color: #cbd5e1;
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12);
+        }
+
+        .media-thumb {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+            background: #eef0f2;
+        }
+
+        .media-thumb::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(100deg, #eef0f2 20%, #ffffff 45%, #eef0f2 70%);
+            background-size: 220% 100%;
+            animation: shimmer 1.25s linear infinite;
+            transition: opacity 0.35s ease;
+        }
+
+        .media-thumb.is-loaded::before {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .media-thumb img,
+        .media-thumb video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transform: scale(1.025);
+            transition: opacity 0.6s ease, transform 0.7s ease;
+        }
+
+        .media-thumb.is-loaded img,
+        .media-thumb.is-loaded video {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .media-badge {
+            position: absolute;
+            top: 12px;
+            inset-inline-start: 12px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(17, 24, 39, 0.76);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            backdrop-filter: blur(8px);
+        }
+
+        .play-badge {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .play-badge span {
+            width: 54px;
+            height: 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.56);
+            color: white;
+            font-size: 22px;
+            backdrop-filter: blur(8px);
+        }
+
+        @keyframes shimmer {
+            from { background-position: 120% 0; }
+            to { background-position: -120% 0; }
+        }
+
+        .filter-btn {
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            color: #374151;
+            transition: all 0.25s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #111827;
+            color: #ffffff;
+            border-color: #111827;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+
+        .modal-backdrop.is-open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-panel {
+            position: relative;
+            width: min(100%, 980px);
+            max-height: 88vh;
+            overflow: hidden;
+            border-radius: 22px;
+            background: #111827;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+            transform: translateY(16px) scale(0.98);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-backdrop.is-open .modal-panel {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-media {
+            width: 100%;
+            max-height: 72vh;
+            object-fit: contain;
+            background: #000000;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            inset-inline-end: 12px;
+            z-index: 3;
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.92);
+            color: #111827;
+            font-size: 26px;
+            line-height: 1;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #ffffff;
+            transform: scale(1.05);
+        }
+
+        .empty-state {
+            display: none;
+        }
+
+        .empty-state.is-visible {
+            display: block;
+        }
     </style>
 </head>
+
 <body class="text-gray-800">
 
-    <!-- قائمة الدرايف العلوية -->
-    <nav class="bg-white px-6 py-4 flex justify-between items-center shadow-sm sticky top-0 z-50">
+    <!-- القائمة العلوية -->
+    <nav class="bg-white/92 backdrop-blur px-6 py-4 flex justify-between items-center shadow-sm sticky top-0 z-50">
         <div class="flex items-center gap-4">
-            <a href="index.html" class="text-gray-500 hover:text-black transition p-2 bg-gray-100 rounded-full">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            <a href="index.html" class="text-gray-500 hover:text-black transition p-2 bg-gray-100 rounded-full" aria-label="Back to home">
+                <svg class="w-5 h-5 rtl:rotate-0 ltr:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
             </a>
-            <h1 class="text-xl font-bold tracking-widest font-serif text-gray-800" style="font-family: 'Playfair Display', serif;">OMS Drive.</h1>
+
+            <div>
+                <h1 class="text-xl font-bold tracking-widest font-serif-en text-gray-800">OMS Drive.</h1>
+                <p data-i18n="nav_subtitle" class="text-xs text-gray-400 mt-1">أرشيف الصور والمقاطع</p>
+            </div>
         </div>
-        <button id="langToggle" class="text-xs font-bold bg-gray-900 text-white hover:bg-gray-700 px-4 py-2 rounded-full transition">EN</button>
+
+        <button id="langToggle" class="text-xs font-bold bg-gray-900 text-white hover:bg-gray-700 px-4 py-2 rounded-full transition">
+            EN
+        </button>
     </nav>
 
-    <!-- مساحة العمل والمجلدات -->
     <main class="max-w-7xl mx-auto px-6 py-10">
-        
-        <div class="flex items-center text-xl text-gray-800 mb-8 font-semibold">
-            <span data-i18n="my_drive">ملفاتي</span>
-            <span class="mx-2 text-gray-400">/</span>
-            <span data-i18n="archive" class="text-gray-500 text-lg">الأرشيف الشامل</span>
+
+        <!-- العنوان -->
+        <section class="mb-8">
+            <div class="flex items-center text-xl text-gray-800 mb-3 font-semibold">
+                <span data-i18n="my_drive">ملفاتي</span>
+                <span class="mx-2 text-gray-400">/</span>
+                <span data-i18n="archive" class="text-gray-500 text-lg">الأرشيف الشامل</span>
+            </div>
+
+            <p data-i18n="archive_desc" class="text-gray-500 max-w-2xl leading-7">
+                هنا تقدر تعرض كل الصور والمقاطع مع بعض في مكان واحد. أضف ملفاتك داخل قائمة mediaItems في الكود.
+            </p>
+        </section>
+
+        <!-- الفلاتر بدون أقسام -->
+        <section class="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <div class="flex flex-wrap gap-2">
+                <button class="filter-btn active px-5 py-2 rounded-full text-sm font-bold" data-filter="all" data-i18n="filter_all">الكل</button>
+                <button class="filter-btn px-5 py-2 rounded-full text-sm font-bold" data-filter="image" data-i18n="filter_images">صور</button>
+                <button class="filter-btn px-5 py-2 rounded-full text-sm font-bold" data-filter="video" data-i18n="filter_videos">مقاطع</button>
+            </div>
+
+            <p class="text-sm text-gray-400">
+                <span data-i18n="total_label">عدد الملفات:</span>
+                <span id="totalCount" class="font-bold text-gray-700">0</span>
+            </p>
+        </section>
+
+        <!-- كل الصور والمقاطع هنا مع بعض -->
+        <section id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></section>
+
+        <div id="emptyState" class="empty-state text-center bg-white border border-gray-200 rounded-2xl p-10 mt-8">
+            <p data-i18n="empty_state" class="text-gray-500">لا توجد ملفات لهذا الخيار حالياً.</p>
         </div>
 
-        <!-- المجلدات -->
-        <h2 class="text-sm font-bold text-gray-500 mb-4" data-i18n="folders">المجلدات</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-            
-            <div class="folder-card bg-white p-4 rounded-xl border border-gray-200 flex items-center gap-4 cursor-pointer transition shadow-sm">
-                <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
-                <div>
-                    <h3 class="font-bold text-sm text-gray-800" data-i18n="f_sports">بطولة كرة القدم </h3>
-                    <p class="text-xs text-gray-400">Taman Seri Pulai</p>
-                </div>
-            </div>
-
-            <div class="folder-card bg-white p-4 rounded-xl border border-gray-200 flex items-center gap-4 cursor-pointer transition shadow-sm">
-                <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
-                <div>
-                    <h3 class="font-bold text-sm text-gray-800" data-i18n="f_cayan">إعلان كيان باك</h3>
-                    <p class="text-xs text-gray-400" data-i18n="f_cayan_sub">Cayan Pack</p>
-                </div>
-            </div>
-
-            <div class="folder-card bg-white p-4 rounded-xl border border-gray-200 flex items-center gap-4 cursor-pointer transition shadow-sm">
-                <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
-                <div>
-                    <h3 class="font-bold text-sm text-gray-800" data-i18n="f_utm">تغطيات جامعية</h3>
-                    <p class="text-xs text-gray-400">UTM Events</p>
-                </div>
-            </div>
-
-            <div class="folder-card bg-white p-4 rounded-xl border border-gray-200 flex items-center gap-4 cursor-pointer transition shadow-sm">
-                <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
-                <div>
-                    <h3 class="font-bold text-sm text-gray-800" data-i18n="f_mockup">نماذج المشاريع</h3>
-                    <p class="text-xs text-gray-400" data-i18n="f_mockup_sub">Group Prototypes</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- الملفات (الصور المباشرة) -->
-        <h2 class="text-sm font-bold text-gray-500 mb-4" data-i18n="files">الملفات</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            
-            <div class="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition cursor-pointer">
-                <div class="h-40 bg-gray-100"><img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?q=80&w=400" class="w-full h-full object-cover"></div>
-                <div class="p-3 flex items-center gap-2 border-t border-gray-100">
-                    <div class="w-4 h-4 bg-red-500 rounded-sm flex-shrink-0"></div>
-                    <p class="text-xs font-semibold text-gray-700 truncate" dir="ltr">IMG_5300_01.jpg</p>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition cursor-pointer">
-                <div class="h-40 bg-gray-100"><img src="https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?q=80&w=400" class="w-full h-full object-cover"></div>
-                <div class="p-3 flex items-center gap-2 border-t border-gray-100">
-                    <div class="w-4 h-4 bg-blue-500 rounded-sm flex-shrink-0"></div>
-                    <p class="text-xs font-semibold text-gray-700 truncate" dir="ltr">Product_Final.png</p>
-                </div>
-            </div>
-
-        </div>
     </main>
 
+    <!-- نافذة عرض الصورة أو المقطع -->
+    <div id="mediaModal" class="modal-backdrop" aria-hidden="true">
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <button id="modalClose" class="modal-close" aria-label="Close">×</button>
+            <div id="modalContent"></div>
+            <div class="bg-white p-4">
+                <h2 id="modalTitle" class="font-bold text-gray-900"></h2>
+                <p id="modalMeta" class="text-sm text-gray-500 mt-1"></p>
+            </div>
+        </div>
+    </div>
+
     <script>
+        /*
+            طريقة إضافة الملفات:
+            - للصورة:
+              { type: "image", title: "اسم الصورة", src: "assets/archive/photo-01.jpg" }
+
+            - للفيديو:
+              { type: "video", title: "اسم المقطع", src: "assets/archive/video-01.mp4", poster: "assets/archive/video-01-cover.jpg" }
+
+            ضع كل الصور والمقاطع داخل assets/archive/
+            وغير الأسماء هنا فقط.
+        */
+
+        const mediaItems = [
+            {
+                type: "image",
+                title: "football-tournament-01.jpg",
+                src: "assets/archive/football-tournament-01.jpg"
+            },
+            {
+                type: "image",
+                title: "cayan-pack-product-01.jpg",
+                src: "assets/archive/cayan-pack-product-01.jpg"
+            },
+            {
+                type: "video",
+                title: "utm-event-highlight-01.mp4",
+                src: "assets/archive/utm-event-highlight-01.mp4",
+                poster: "assets/archive/utm-event-highlight-01-cover.jpg"
+            },
+            {
+                type: "image",
+                title: "project-mockup-01.jpg",
+                src: "assets/archive/project-mockup-01.jpg"
+            },
+
+            /* انسخ هذا السطر وأضف صورك ومقاطعك هنا */
+            // { type: "image", title: "new-photo-name.jpg", src: "assets/archive/new-photo-name.jpg" },
+            // { type: "video", title: "new-video-name.mp4", src: "assets/archive/new-video-name.mp4", poster: "assets/archive/new-video-cover.jpg" },
+        ];
+
         const translations = {
             ar: {
-                my_drive: "ملفاتي", archive: "الأرشيف الشامل", folders: "المجلدات", files: "الملفات",
-                f_sports: "بطولة كرة القدم", f_cayan: "إعلان كيان باك", f_utm: "تغطيات جامعية", f_mockup: "نماذج المشاريع",
-                f_cayan_sub: "منتجات", f_mockup_sub: "نماذج وأعمال جماعية"
+                nav_subtitle: "أرشيف الصور والمقاطع",
+                my_drive: "ملفاتي",
+                archive: "الأرشيف الشامل",
+                archive_desc: "هنا تقدر تعرض كل الصور والمقاطع مع بعض في مكان واحد. أضف ملفاتك داخل قائمة mediaItems في الكود.",
+                filter_all: "الكل",
+                filter_images: "صور",
+                filter_videos: "مقاطع",
+                total_label: "عدد الملفات:",
+                empty_state: "لا توجد ملفات لهذا الخيار حالياً.",
+                image_label: "صورة",
+                video_label: "مقطع",
+                modal_type_image: "نوع الملف: صورة",
+                modal_type_video: "نوع الملف: مقطع"
             },
             en: {
-                my_drive: "My Drive", archive: "Full Archive", folders: "Folders", files: "Files",
-                f_sports: "Football Tournament", f_cayan: "Cayan Pack Ad", f_utm: "University Events", f_mockup: "Project Mockups",
-                f_cayan_sub: "Products", f_mockup_sub: "Group works & prototypes"
+                nav_subtitle: "Photos & Videos Archive",
+                my_drive: "My Drive",
+                archive: "Full Archive",
+                archive_desc: "Display all photos and videos together in one place. Add your files inside the mediaItems list in the code.",
+                filter_all: "All",
+                filter_images: "Images",
+                filter_videos: "Videos",
+                total_label: "Total files:",
+                empty_state: "No files for this option yet.",
+                image_label: "Image",
+                video_label: "Video",
+                modal_type_image: "File type: Image",
+                modal_type_video: "File type: Video"
             }
         };
 
-        let currentLang = 'ar';
-        const langToggleBtn = document.getElementById('langToggle');
-        const htmlRoot = document.getElementById('html-root');
+        let currentLang = "ar";
+        let currentFilter = "all";
 
-        langToggleBtn.addEventListener('click', () => {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            htmlRoot.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-            htmlRoot.setAttribute('lang', currentLang);
-            langToggleBtn.innerText = currentLang === 'ar' ? 'EN' : 'عربي';
+        const langToggleBtn = document.getElementById("langToggle");
+        const htmlRoot = document.getElementById("html-root");
+        const mediaGrid = document.getElementById("mediaGrid");
+        const totalCount = document.getElementById("totalCount");
+        const emptyState = document.getElementById("emptyState");
 
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (translations[currentLang][key]) el.innerText = translations[currentLang][key];
+        const mediaModal = document.getElementById("mediaModal");
+        const modalClose = document.getElementById("modalClose");
+        const modalContent = document.getElementById("modalContent");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalMeta = document.getElementById("modalMeta");
+
+        const getLabel = (key) => translations[currentLang][key] || key;
+
+        function renderMedia(filter = "all") {
+            currentFilter = filter;
+            mediaGrid.innerHTML = "";
+
+            const filteredItems = mediaItems.filter((item) => {
+                return filter === "all" || item.type === filter;
+            });
+
+            totalCount.textContent = filteredItems.length;
+            emptyState.classList.toggle("is-visible", filteredItems.length === 0);
+
+            filteredItems.forEach((item, index) => {
+                const card = document.createElement("article");
+                card.className = "media-card";
+                card.style.animationDelay = `${Math.min(index % 4, 3) * 80}ms`;
+
+                const isVideo = item.type === "video";
+                const badgeText = isVideo ? getLabel("video_label") : getLabel("image_label");
+
+                card.innerHTML = `
+                    <div class="media-thumb">
+                        <span class="media-badge">${isVideo ? "▶" : "▣"} ${badgeText}</span>
+                        ${isVideo ? `<div class="play-badge"><span>▶</span></div>` : ""}
+                        ${
+                            isVideo
+                                ? `<video muted playsinline preload="metadata" ${item.poster ? `poster="${item.poster}"` : ""}>
+                                       <source src="${item.src}" type="video/mp4">
+                                   </video>`
+                                : `<img loading="lazy" decoding="async" src="${item.src}" alt="${item.title}">`
+                        }
+                    </div>
+
+                    <div class="p-4">
+                        <p class="text-sm font-bold text-gray-800 truncate" dir="ltr">${item.title}</p>
+                        <p class="text-xs text-gray-400 mt-1">${badgeText}</p>
+                    </div>
+                `;
+
+                card.addEventListener("click", () => openModal(item));
+                mediaGrid.appendChild(card);
+
+                const thumb = card.querySelector(".media-thumb");
+                const mediaElement = card.querySelector("img, video");
+
+                const markLoaded = () => thumb.classList.add("is-loaded");
+
+                if (mediaElement.tagName.toLowerCase() === "img") {
+                    if (mediaElement.complete) {
+                        markLoaded();
+                    } else {
+                        mediaElement.addEventListener("load", markLoaded, { once: true });
+                        mediaElement.addEventListener("error", markLoaded, { once: true });
+                    }
+                } else {
+                    mediaElement.addEventListener("loadedmetadata", markLoaded, { once: true });
+                    mediaElement.addEventListener("error", markLoaded, { once: true });
+                }
+            });
+        }
+
+        function openModal(item) {
+            const isVideo = item.type === "video";
+
+            modalContent.innerHTML = isVideo
+                ? `<video class="modal-media" controls autoplay playsinline ${item.poster ? `poster="${item.poster}"` : ""}>
+                       <source src="${item.src}" type="video/mp4">
+                   </video>`
+                : `<img class="modal-media" src="${item.src}" alt="${item.title}">`;
+
+            modalTitle.textContent = item.title;
+            modalMeta.textContent = isVideo ? getLabel("modal_type_video") : getLabel("modal_type_image");
+
+            mediaModal.classList.add("is-open");
+            mediaModal.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal() {
+            mediaModal.classList.remove("is-open");
+            mediaModal.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+            modalContent.innerHTML = "";
+        }
+
+        document.querySelectorAll("[data-filter]").forEach((button) => {
+            button.addEventListener("click", () => {
+                document.querySelectorAll("[data-filter]").forEach((btn) => btn.classList.remove("active"));
+                button.classList.add("active");
+                renderMedia(button.getAttribute("data-filter"));
             });
         });
+
+        langToggleBtn.addEventListener("click", () => {
+            currentLang = currentLang === "ar" ? "en" : "ar";
+            htmlRoot.setAttribute("dir", currentLang === "ar" ? "rtl" : "ltr");
+            htmlRoot.setAttribute("lang", currentLang);
+            langToggleBtn.innerText = currentLang === "ar" ? "EN" : "عربي";
+
+            document.querySelectorAll("[data-i18n]").forEach((el) => {
+                const key = el.getAttribute("data-i18n");
+                if (translations[currentLang][key]) {
+                    el.innerText = translations[currentLang][key];
+                }
+            });
+
+            renderMedia(currentFilter);
+        });
+
+        modalClose.addEventListener("click", closeModal);
+
+        mediaModal.addEventListener("click", (event) => {
+            if (event.target === mediaModal) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && mediaModal.classList.contains("is-open")) {
+                closeModal();
+            }
+        });
+
+        renderMedia();
     </script>
 </body>
 </html>
