@@ -4,122 +4,286 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OMS Studio | استوديو تصوير</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- خطوط راقية مطابقة لتصميمك -->
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
     <style>
-        body { font-family: 'Alexandria', sans-serif; background-color: #ffffff; transition: all 0.3s ease; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Alexandria', sans-serif;
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
         html[dir="ltr"] body { font-family: 'Playfair Display', serif; }
         .font-serif-en { font-family: 'Playfair Display', serif; }
-        html[dir="ltr"] .font-serif-en { font-family: 'Playfair Display', serif; }
-        
+
+        /* مساحة إضافية حتى لا يغطي الشريط العلوي بداية القسم عند الانتقال */
+        section, header { scroll-margin-top: 88px; }
+
         /* تأثيرات الصور */
-        .img-hover-zoom { overflow: hidden; position: relative; }
-        .img-hover-zoom img { transition: transform 0.5s ease; width: 100%; height: 100%; object-fit: cover; }
-        .img-hover-zoom:hover img { transform: scale(1.05); }
-        
-        /* لون شريط الأقسام (أخضر داكن فخم كما في صورتك) */
-        .category-header { background-color: #1a362d; color: white; }
+        .img-hover-zoom {
+            overflow: hidden;
+            position: relative;
+            min-height: 260px;
+            background: #f3f4f6;
+        }
+
+        .img-hover-zoom img {
+            transition: transform 0.55s ease;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .img-hover-zoom:hover img { transform: scale(1.06); }
+
+        /* الفاصل الجديد: خطوط هادئة مع عنوان في المنتصف */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .section-divider::before,
+        .section-divider::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: linear-gradient(to left, transparent, #9ca3af, transparent);
+        }
+
+        .section-divider-title {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 999px;
+            background-color: #ffffff;
+            color: #1f2937;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-align: center;
+        }
+
+        /* بطاقات صور العملاء */
+        .client-logo-card {
+            min-height: 118px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 18px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .client-logo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .client-logo-card img {
+            width: 100%;
+            height: 76px;
+            object-fit: contain;
+        }
+
+
+        /* تحميل الصور بشكل أنيق */
+        .image-frame {
+            position: relative;
+            overflow: hidden;
+            background: #eef0f2;
+        }
+
+        .image-frame::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(100deg, #eef0f2 20%, #ffffff 45%, #eef0f2 70%);
+            background-size: 220% 100%;
+            animation: imageShimmer 1.25s linear infinite;
+            transition: opacity 0.35s ease;
+        }
+
+        .image-frame img {
+            opacity: 0;
+            transform: scale(1.025);
+            transition: opacity 0.65s ease, transform 0.75s ease;
+        }
+
+        .image-frame.is-loaded::before {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .image-frame.is-loaded img {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        @keyframes imageShimmer {
+            from { background-position: 120% 0; }
+            to { background-position: -120% 0; }
+        }
+
+        /* ظهور العناصر عند النزول */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.75s ease, transform 0.75s ease;
+        }
+
+        .scroll-reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* لون خفيف للشريط عند النزول */
+        .nav-scrolled {
+            background: rgba(17, 17, 17, 0.93);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+        }
     </style>
 </head>
+
 <body class="text-gray-900 antialiased">
 
     <!-- القائمة العلوية -->
-    <nav class="absolute w-full z-50 py-6 px-8 flex justify-between items-center text-white" data-aos="fade-down">
-        <div class="text-2xl font-bold font-serif-en tracking-widest">OMS.</div>
-        <div class="hidden md:flex gap-8 text-sm tracking-wide items-center">
-            <a href="#works" data-i18n="nav_works" class="hover:text-gray-300 transition">الأعمال</a>
-            <a href="drive.html" data-i18n="nav_archive" class="hover:text-gray-300 transition text-yellow-400 font-bold">الأرشيف</a>
-            <a href="#clients" data-i18n="nav_clients" class="hover:text-gray-300 transition">العملاء</a>
-            <button id="langToggle" class="mx-4 text-xs font-bold bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition">EN</button>
+    <nav id="mainNav" class="fixed w-full z-50 py-5 px-6 md:px-8 flex justify-between items-center text-white transition duration-300">
+        <a href="#home" class="text-2xl font-bold font-serif-en tracking-widest internal-link">OMS.</a>
+
+        <div class="hidden md:flex gap-6 lg:gap-8 text-sm tracking-wide items-center">
+            <a href="#home" data-i18n="nav_home" class="internal-link hover:text-gray-300 transition">الشاشة الرئيسية</a>
+            <a href="#works" data-i18n="nav_works" class="internal-link hover:text-gray-300 transition">الأعمال</a>
+            <a href="drive.html" data-i18n="nav_archive" class="hover:text-yellow-300 transition text-yellow-400 font-bold">الأرشيف</a>
+            <a href="#clients" data-i18n="nav_clients" class="internal-link hover:text-gray-300 transition">العملاء</a>
+            <a href="#contact" data-i18n="nav_contact" class="internal-link hover:text-gray-300 transition">تواصل معنا</a>
+
+            <button id="langToggle" class="mx-2 text-xs font-bold bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition">
+                EN
+            </button>
         </div>
-        <a href="#contact" data-i18n="book_btn" class="border border-white hover:bg-white hover:text-black transition px-6 py-2 rounded-full text-sm font-bold">
+
+        <a href="#contact" data-i18n="book_btn" class="internal-link border border-white hover:bg-white hover:text-black transition px-5 md:px-6 py-2 rounded-full text-xs md:text-sm font-bold">
             احجز جلسة
         </a>
     </nav>
 
-    <!-- الواجهة الرئيسية -->
-    <header class="relative h-screen bg-[#111] flex items-center justify-center text-center px-6">
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1551636898-47668aa61de2?q=80&w=2000')] bg-cover bg-center opacity-40"></div>
+    <!-- الشاشة الرئيسية -->
+    <header id="home" class="relative h-screen bg-[#111] flex items-center justify-center text-center px-6">
+        <div class="absolute inset-0 bg-[url('assets/hero/oms-home-hero.jpg')] bg-cover bg-center opacity-40"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/40"></div>
+
         <div class="relative z-10 max-w-4xl mx-auto" data-aos="zoom-in" data-aos-duration="1000">
+            <p data-i18n="hero_label" class="text-xs md:text-sm text-gray-300 tracking-[0.35em] mb-5 uppercase">
+                Photography Studio
+            </p>
+
             <h1 data-i18n="hero_title" class="text-5xl md:text-7xl font-serif-en text-white mb-6 leading-tight">
                 نحن استوديو OMS
             </h1>
+
             <p data-i18n="hero_desc" class="text-gray-200 text-lg md:text-2xl font-light tracking-wide">
                 نصور اللحظات، نصنع الذكريات.
             </p>
+
+            <a href="#works" data-i18n="hero_cta" class="internal-link inline-block mt-10 border border-white/80 hover:bg-white hover:text-black text-white transition px-8 py-3 rounded-full text-sm font-bold">
+                شاهد أعمالنا
+            </a>
         </div>
     </header>
 
-    <!-- قسم الأعمال (بنفس ستايل الصور المرفقة) -->
+    <!-- الأعمال -->
     <section id="works" class="py-20 px-6 max-w-6xl mx-auto">
         <div class="text-center mb-16" data-aos="fade-up">
-            <h2 data-i18n="selected_works" class="text-4xl font-bold mb-3 font-serif-en">Selected Works</h2>
-            <p data-i18n="works_subtitle" class="text-gray-500 text-lg">Every photograph tells a story.</p>
+            <h2 data-i18n="selected_works" class="text-4xl font-bold mb-3 font-serif-en">أعمال مختارة</h2>
+            <p data-i18n="works_subtitle" class="text-gray-500 text-lg">كل صورة تروي قصة.</p>
         </div>
 
-        <!-- القسم الأول: الأزياء والتجاري -->
+        <!-- القسم الأول -->
         <div class="mb-20" data-aos="fade-up">
-            <div class="category-header py-4 text-center font-bold tracking-widest uppercase mb-8" data-i18n="cat_fashion">
-                FASHION & COMMERCIAL PHOTOGRAPHY
+            <div class="section-divider">
+                <span class="section-divider-title" data-i18n="cat_fashion">تصوير الأزياء والتصوير التجاري</span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-[500px]">
-                <div class="img-hover-zoom h-full"><img src="https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?q=80&w=800" alt="Commercial 1"></div>
-                <div class="img-hover-zoom h-full"><img src="https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=800" alt="Commercial 2"></div>
-            </div>
-        </div>
 
-        <!-- القسم الثاني: الفعاليات والمناسبات -->
-        <div class="mb-20" data-aos="fade-up">
-            <div class="category-header py-4 text-center font-bold tracking-widest uppercase mb-8" data-i18n="cat_events">
-                EVENTS & CORPORATE PHOTOGRAPHY
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-[400px]">
-                <div class="img-hover-zoom h-full"><img src="https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=800" alt="Event 1"></div>
-                <div class="img-hover-zoom h-full col-span-1 md:col-span-2"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200" alt="Event 2"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/fashion-commercial/fashion-commercial-01.jpg" alt="Commercial photography 1"></div>
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/fashion-commercial/fashion-commercial-02.jpg" alt="Commercial photography 2"></div>
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/fashion-commercial/fashion-commercial-03.jpg" alt="Commercial photography 3"></div>
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/fashion-commercial/fashion-commercial-04.jpg" alt="Commercial photography 4"></div>
             </div>
         </div>
 
-        <!-- القسم الثالث: الرياضي (مضاف من أعمالك) -->
+        <!-- القسم الثاني -->
         <div class="mb-20" data-aos="fade-up">
-            <div class="category-header py-4 text-center font-bold tracking-widest uppercase mb-8" data-i18n="cat_sports">
-                SPORTS & ACTION PHOTOGRAPHY
+            <div class="section-divider">
+                <span class="section-divider-title" data-i18n="cat_events">تصوير الفعاليات والمناسبات الرسمية</span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-[400px]">
-                <div class="img-hover-zoom h-full"><img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?q=80&w=800" alt="Sport 1"></div>
-                <div class="img-hover-zoom h-full bg-gray-100 flex flex-col justify-center items-center text-center p-8">
-                    <h3 class="text-2xl font-bold mb-2" data-i18n="sport_title">بطولة كرة القدم المصغرة</h3>
-                    <p class="text-gray-500 mb-4" data-i18n="sport_desc">ميدان Taman Seri Pulai</p>
-                    <span class="bg-black text-white px-4 py-1 text-xs rounded uppercase tracking-wider">Nikon D5300</span>
-                </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/events-corporate/events-corporate-01.jpg" alt="Event photography 1"></div>
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/events-corporate/events-corporate-02.jpg" alt="Event photography 2"></div>
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/events-corporate/events-corporate-03.jpg" alt="Event photography 3"></div>
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/events-corporate/events-corporate-04.jpg" alt="Event photography 4"></div>
             </div>
         </div>
-        
-        <!-- زر الذهاب للأرشيف (الدرايف) -->
+
+        <!-- القسم الثالث -->
+        <div class="mb-20" data-aos="fade-up">
+            <div class="section-divider">
+                <span class="section-divider-title" data-i18n="cat_sports">التصوير الرياضي والحركي</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/sports-action/sports-action-01.jpg" alt="Sports photography 1"></div>
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/sports-action/sports-action-02.jpg" alt="Sports photography 2"></div>
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/sports-action/sports-action-03.jpg" alt="Sports photography 3"></div>
+                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/sports-action/sports-action-04.jpg" alt="Sports photography 4"></div>
+            </div>
+        </div>
+
         <div class="text-center mt-12" data-aos="zoom-in">
             <a href="drive.html" data-i18n="btn_archive_full" class="inline-block bg-gray-900 hover:bg-gray-800 text-white font-bold py-4 px-10 rounded-full transition shadow-lg">
-                تصفح الأرشيف الكامل (درايف)
+                تصفح الأرشيف الكامل
             </a>
         </div>
     </section>
 
-    <!-- قسم العملاء -->
-    <section id="clients" class="bg-gray-50 py-16">
+    <!-- العملاء: استبدل المسارات الستة بصورك -->
+    <section id="clients" class="bg-gray-50 py-20">
         <div class="max-w-6xl mx-auto px-6 text-center">
-            <h2 data-i18n="clients_title" class="text-sm font-bold tracking-widest text-gray-400 uppercase mb-10">عملاء وثقوا بنا</h2>
-            <div class="flex flex-wrap justify-center items-center gap-12 opacity-70 grayscale hover:grayscale-0 transition duration-500">
-                <span class="text-2xl font-black tracking-wider font-serif-en">UTM</span>
-                <span class="text-2xl font-black tracking-wider font-serif-en">BORGAT</span>
-                <span class="text-2xl font-black tracking-wider font-serif-en">SOLARIZE</span>
-                <span class="text-2xl font-black tracking-wider font-serif-en">CAYAN PACK</span>
+            <h2 data-i18n="clients_title" class="text-sm font-bold tracking-widest text-gray-400 uppercase mb-4">
+                عملاء وثقوا بنا
+            </h2>
+
+            <p data-i18n="clients_subtitle" class="text-gray-500 mb-10">
+                بعض الجهات التي سعدنا بالعمل معها
+            </p>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-5">
+                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-01.png" alt="Client logo 1"></div>
+                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-02.png" alt="Client logo 2"></div>
+                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-03.png" alt="Client logo 3"></div>
+                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-04.png" alt="Client logo 4"></div>
+                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-05.png" alt="Client logo 5"></div>
+                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-06.png" alt="Client logo 6"></div>
             </div>
         </div>
     </section>
 
-    <!-- الفوتر -->
+    <!-- التواصل -->
     <footer id="contact" class="bg-black text-white text-center py-16">
-        <h2 data-i18n="contact_title" class="text-3xl font-serif-en mb-6">Let's Create Together</h2>
+        <h2 data-i18n="contact_title" class="text-3xl font-serif-en mb-6">دعنا نصنع الإبداع معاً</h2>
         <a href="mailto:studiooms3@gmail.com" class="text-gray-400 hover:text-white transition block mb-8">studiooms3@gmail.com</a>
         <p data-i18n="footer" class="text-xs text-gray-600">© 2026 OMS Studio. جميع الحقوق محفوظة.</p>
     </footer>
@@ -130,40 +294,124 @@
 
         const translations = {
             ar: {
-                nav_works: "الأعمال", nav_archive: "الأرشيف", nav_clients: "العملاء", book_btn: "احجز جلسة",
-                hero_title: "نحن استوديو OMS", hero_desc: "نصور اللحظات، نصنع الذكريات.",
-                selected_works: "أعمال مختارة", works_subtitle: "كل صورة تروي قصة.",
-                cat_fashion: "تصوير الأزياء والتصوير التجاري", cat_events: "تصوير الفعاليات والمناسبات الرسمية", cat_sports: "التصوير الرياضي والحركي",
-                sport_title: "بطولة كرة القدم المصغرة", sport_desc: "ميدان Taman Seri Pulai",
-                btn_archive_full: "تصفح الأرشيف الكامل (درايف)", clients_title: "عملاء وثقوا بنا",
-                contact_title: "دعنا نصنع الإبداع معاً", footer: "© 2026 OMS Studio. جميع الحقوق محفوظة."
+                nav_home: "الشاشة الرئيسية",
+                nav_works: "الأعمال",
+                nav_archive: "الأرشيف",
+                nav_clients: "العملاء",
+                nav_contact: "تواصل معنا",
+                book_btn: "احجز جلسة",
+                hero_label: "استوديو تصوير",
+                hero_title: "نحن استوديو OMS",
+                hero_desc: "نصور اللحظات، نصنع الذكريات.",
+                hero_cta: "شاهد أعمالنا",
+                selected_works: "أعمال مختارة",
+                works_subtitle: "كل صورة تروي قصة.",
+                cat_fashion: "تصوير الأزياء والتصوير التجاري",
+                cat_events: "تصوير الفعاليات والمناسبات الرسمية",
+                cat_sports: "التصوير الرياضي والحركي",
+                btn_archive_full: "تصفح الأرشيف الكامل",
+                clients_title: "عملاء وثقوا بنا",
+                clients_subtitle: "بعض الجهات التي سعدنا بالعمل معها",
+                contact_title: "دعنا نصنع الإبداع معاً",
+                footer: "© 2026 OMS Studio. جميع الحقوق محفوظة."
             },
             en: {
-                nav_works: "Works", nav_archive: "Archive", nav_clients: "Clients", book_btn: "Book Session",
-                hero_title: "We are OMS Studio", hero_desc: "Capture, Create, Connect.",
-                selected_works: "Selected Works", works_subtitle: "Every photograph tells a story.",
-                cat_fashion: "FASHION & COMMERCIAL PHOTOGRAPHY", cat_events: "EVENTS & CORPORATE PHOTOGRAPHY", cat_sports: "SPORTS & ACTION PHOTOGRAPHY",
-                sport_title: "Mini Football Tournament", sport_desc: "Taman Seri Pulai Field",
-                btn_archive_full: "Explore Full Archive (Drive)", clients_title: "Clients I've Worked With",
-                contact_title: "Let's Create Together", footer: "© 2026 OMS Studio. All rights reserved."
+                nav_home: "Home",
+                nav_works: "Works",
+                nav_archive: "Archive",
+                nav_clients: "Clients",
+                nav_contact: "Contact",
+                book_btn: "Book Session",
+                hero_label: "Photography Studio",
+                hero_title: "We are OMS Studio",
+                hero_desc: "Capture, Create, Connect.",
+                hero_cta: "View Our Work",
+                selected_works: "Selected Works",
+                works_subtitle: "Every photograph tells a story.",
+                cat_fashion: "FASHION & COMMERCIAL PHOTOGRAPHY",
+                cat_events: "EVENTS & CORPORATE PHOTOGRAPHY",
+                cat_sports: "SPORTS & ACTION PHOTOGRAPHY",
+                btn_archive_full: "Explore Full Archive",
+                clients_title: "Clients We've Worked With",
+                clients_subtitle: "A selection of clients we have been pleased to work with",
+                contact_title: "Let's Create Together",
+                footer: "© 2026 OMS Studio. All rights reserved."
             }
         };
 
-        let currentLang = 'ar';
-        const langToggleBtn = document.getElementById('langToggle');
-        const htmlRoot = document.getElementById('html-root');
+        let currentLang = "ar";
+        const langToggleBtn = document.getElementById("langToggle");
+        const htmlRoot = document.getElementById("html-root");
+        const mainNav = document.getElementById("mainNav");
 
-        langToggleBtn.addEventListener('click', () => {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            htmlRoot.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-            htmlRoot.setAttribute('lang', currentLang);
-            langToggleBtn.innerText = currentLang === 'ar' ? 'EN' : 'عربي';
+        langToggleBtn.addEventListener("click", () => {
+            currentLang = currentLang === "ar" ? "en" : "ar";
+            htmlRoot.setAttribute("dir", currentLang === "ar" ? "rtl" : "ltr");
+            htmlRoot.setAttribute("lang", currentLang);
+            langToggleBtn.innerText = currentLang === "ar" ? "EN" : "عربي";
 
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (translations[currentLang][key]) el.innerText = translations[currentLang][key];
+            document.querySelectorAll("[data-i18n]").forEach((el) => {
+                const key = el.getAttribute("data-i18n");
+                if (translations[currentLang][key]) {
+                    el.innerText = translations[currentLang][key];
+                }
             });
         });
+
+        /* الانتقال الناعم داخل الصفحة بدون إعادة تحميل */
+        document.querySelectorAll(".internal-link").forEach((link) => {
+            link.addEventListener("click", (event) => {
+                const targetId = link.getAttribute("href");
+
+                if (!targetId || !targetId.startsWith("#")) return;
+
+                const target = document.querySelector(targetId);
+                if (!target) return;
+
+                event.preventDefault();
+                target.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+        });
+
+
+        /* إظهار الصور بعد اكتمال التحميل */
+        document.querySelectorAll(".image-frame img").forEach((image) => {
+            const frame = image.closest(".image-frame");
+
+            const markAsLoaded = () => {
+                frame.classList.add("is-loaded");
+            };
+
+            if (image.complete) {
+                markAsLoaded();
+            } else {
+                image.addEventListener("load", markAsLoaded, { once: true });
+                image.addEventListener("error", markAsLoaded, { once: true });
+            }
+        });
+
+        /* ظهور تدريجي عند النزول */
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("is-visible");
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll(".scroll-reveal").forEach((element, index) => {
+            element.style.transitionDelay = `${Math.min(index % 4, 3) * 90}ms`;
+            revealObserver.observe(element);
+        });
+
+        /* خلفية الشريط العلوي بعد النزول */
+        const updateNavbar = () => {
+            mainNav.classList.toggle("nav-scrolled", window.scrollY > 40);
+        };
+
+        updateNavbar();
+        window.addEventListener("scroll", updateNavbar);
     </script>
 </body>
 </html>
