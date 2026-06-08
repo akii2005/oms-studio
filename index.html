@@ -147,6 +147,81 @@
             transform: translateY(0);
         }
 
+
+        /* نافذة التواصل المنبثقة */
+        .contact-popup-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.58);
+            backdrop-filter: blur(7px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .contact-popup-backdrop.is-open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .contact-popup-panel {
+            width: min(100%, 460px);
+            border-radius: 24px;
+            background: #ffffff;
+            padding: 28px;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+            transform: translateY(18px) scale(0.98);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-popup-backdrop.is-open .contact-popup-panel {
+            transform: translateY(0) scale(1);
+        }
+
+        .contact-link-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 14px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .contact-link-card:hover {
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.07);
+        }
+
+        .contact-icon {
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 999px;
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        .footer-contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.25s ease, transform 0.25s ease;
+        }
+
+        .footer-contact-link:hover {
+            transform: translateY(-2px);
+        }
+
         /* لون خفيف للشريط عند النزول */
         .nav-scrolled {
             background: rgba(17, 17, 17, 0.93);
@@ -174,9 +249,9 @@
             </button>
         </div>
 
-        <a href="#contact" data-i18n="book_btn" class="internal-link border border-white hover:bg-white hover:text-black transition px-5 md:px-6 py-2 rounded-full text-xs md:text-sm font-bold">
+        <button type="button" data-open-contact-popup data-i18n="book_btn" class="border border-white hover:bg-white hover:text-black transition px-5 md:px-6 py-2 rounded-full text-xs md:text-sm font-bold">
             احجز جلسة
-        </a>
+        </button>
     </nav>
 
     <!-- الشاشة الرئيسية -->
@@ -283,10 +358,72 @@
 
     <!-- التواصل -->
     <footer id="contact" class="bg-black text-white text-center py-16">
-        <h2 data-i18n="contact_title" class="text-3xl font-serif-en mb-6">دعنا نصنع الإبداع معاً</h2>
-        <a href="mailto:studiooms3@gmail.com" class="text-gray-400 hover:text-white transition block mb-8">studiooms3@gmail.com</a>
+        <h2 data-i18n="contact_title" class="text-3xl font-serif-en mb-5">دعنا نصنع الإبداع معاً</h2>
+        <p data-i18n="contact_subtitle" class="text-gray-500 mb-8">تواصل معنا عبر القناة المناسبة لك</p>
+
+        <!-- استبدل رقم الواتس واسم حساب الإنستغرام ببياناتك -->
+        <div class="flex flex-wrap justify-center items-center gap-5 md:gap-8 mb-10 text-sm">
+            <a href="mailto:studiooms3@gmail.com" class="footer-contact-link text-gray-300 hover:text-white">
+                <span aria-hidden="true">✉</span>
+                <span>studiooms3@gmail.com</span>
+            </a>
+
+            <a href="https://instagram.com/YOUR_INSTAGRAM_USERNAME" target="_blank" rel="noopener noreferrer" class="footer-contact-link text-gray-300 hover:text-white">
+                <span aria-hidden="true">◎</span>
+                <span>@YOUR_INSTAGRAM_USERNAME</span>
+            </a>
+
+            <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" target="_blank" rel="noopener noreferrer" class="footer-contact-link text-gray-300 hover:text-white">
+                <span aria-hidden="true">◉</span>
+                <span data-i18n="whatsapp_label">واتساب</span>
+            </a>
+        </div>
+
         <p data-i18n="footer" class="text-xs text-gray-600">© 2026 OMS Studio. جميع الحقوق محفوظة.</p>
     </footer>
+
+    <!-- نافذة الحجز المنبثقة -->
+    <div id="contactPopup" class="contact-popup-backdrop" aria-hidden="true">
+        <div class="contact-popup-panel" role="dialog" aria-modal="true" aria-labelledby="contactPopupTitle">
+            <div class="flex justify-between items-start gap-4 mb-7">
+                <div>
+                    <p data-i18n="popup_label" class="text-xs text-gray-400 tracking-[0.24em] uppercase mb-2">OMS Studio</p>
+                    <h2 id="contactPopupTitle" data-i18n="popup_title" class="text-2xl font-bold text-gray-900">احجز جلستك</h2>
+                    <p data-i18n="popup_desc" class="text-sm text-gray-500 mt-2">اختر طريقة التواصل المناسبة لك</p>
+                </div>
+
+                <button type="button" data-close-contact-popup aria-label="Close" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 transition text-xl leading-none">
+                    ×
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" target="_blank" rel="noopener noreferrer" class="contact-link-card">
+                    <span class="contact-icon" aria-hidden="true">◉</span>
+                    <span>
+                        <span data-i18n="popup_whatsapp" class="block text-sm font-bold text-gray-900">تواصل عبر واتساب</span>
+                        <span data-i18n="popup_whatsapp_sub" class="block text-xs text-gray-500 mt-1">ابدأ محادثة مباشرة معنا</span>
+                    </span>
+                </a>
+
+                <a href="https://instagram.com/YOUR_INSTAGRAM_USERNAME" target="_blank" rel="noopener noreferrer" class="contact-link-card">
+                    <span class="contact-icon" aria-hidden="true">◎</span>
+                    <span>
+                        <span data-i18n="popup_instagram" class="block text-sm font-bold text-gray-900">زور حسابنا في إنستغرام</span>
+                        <span class="block text-xs text-gray-500 mt-1">@YOUR_INSTAGRAM_USERNAME</span>
+                    </span>
+                </a>
+
+                <a href="mailto:studiooms3@gmail.com" class="contact-link-card">
+                    <span class="contact-icon" aria-hidden="true">✉</span>
+                    <span>
+                        <span data-i18n="popup_email" class="block text-sm font-bold text-gray-900">راسلنا عبر البريد الإلكتروني</span>
+                        <span class="block text-xs text-gray-500 mt-1">studiooms3@gmail.com</span>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -313,6 +450,15 @@
                 clients_title: "عملاء وثقوا بنا",
                 clients_subtitle: "بعض الجهات التي سعدنا بالعمل معها",
                 contact_title: "دعنا نصنع الإبداع معاً",
+                contact_subtitle: "تواصل معنا عبر القناة المناسبة لك",
+                whatsapp_label: "واتساب",
+                popup_label: "OMS Studio",
+                popup_title: "احجز جلستك",
+                popup_desc: "اختر طريقة التواصل المناسبة لك",
+                popup_whatsapp: "تواصل عبر واتساب",
+                popup_whatsapp_sub: "ابدأ محادثة مباشرة معنا",
+                popup_instagram: "زور حسابنا في إنستغرام",
+                popup_email: "راسلنا عبر البريد الإلكتروني",
                 footer: "© 2026 OMS Studio. جميع الحقوق محفوظة."
             },
             en: {
@@ -335,6 +481,15 @@
                 clients_title: "Clients We've Worked With",
                 clients_subtitle: "A selection of clients we have been pleased to work with",
                 contact_title: "Let's Create Together",
+                contact_subtitle: "Reach us through your preferred channel",
+                whatsapp_label: "WhatsApp",
+                popup_label: "OMS Studio",
+                popup_title: "Book Your Session",
+                popup_desc: "Choose the contact method that suits you",
+                popup_whatsapp: "Chat with us on WhatsApp",
+                popup_whatsapp_sub: "Start a direct conversation with us",
+                popup_instagram: "Visit our Instagram",
+                popup_email: "Email us",
                 footer: "© 2026 OMS Studio. All rights reserved."
             }
         };
@@ -403,6 +558,44 @@
         document.querySelectorAll(".scroll-reveal").forEach((element, index) => {
             element.style.transitionDelay = `${Math.min(index % 4, 3) * 90}ms`;
             revealObserver.observe(element);
+        });
+
+
+        /* فتح وإغلاق نافذة الحجز */
+        const contactPopup = document.getElementById("contactPopup");
+        const popupOpenButtons = document.querySelectorAll("[data-open-contact-popup]");
+        const popupCloseButtons = document.querySelectorAll("[data-close-contact-popup]");
+
+        const openContactPopup = () => {
+            contactPopup.classList.add("is-open");
+            contactPopup.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        };
+
+        const closeContactPopup = () => {
+            contactPopup.classList.remove("is-open");
+            contactPopup.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+        };
+
+        popupOpenButtons.forEach((button) => {
+            button.addEventListener("click", openContactPopup);
+        });
+
+        popupCloseButtons.forEach((button) => {
+            button.addEventListener("click", closeContactPopup);
+        });
+
+        contactPopup.addEventListener("click", (event) => {
+            if (event.target === contactPopup) {
+                closeContactPopup();
+            }
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && contactPopup.classList.contains("is-open")) {
+                closeContactPopup();
+            }
         });
 
         /* خلفية الشريط العلوي بعد النزول */
