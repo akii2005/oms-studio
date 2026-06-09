@@ -237,10 +237,10 @@
             /* ظهور تدريجي للعناصر عند النزول في الصفحة */
             .scroll-reveal {
                 opacity: 0;
-                transform: translateY(26px);
+                transform: translateY(42px);
                 transition:
-                    opacity 0.75s ease,
-                    transform 0.75s ease;
+                    opacity 1.15s cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 1.15s cubic-bezier(0.22, 1, 0.36, 1);
             }
             .scroll-reveal.is-visible {
                 opacity: 1;
@@ -1027,7 +1027,7 @@
         <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <script>
             /* تفعيل حركات الظهور الجاهزة من مكتبة AOS */
-            AOS.init({ once: true, offset: 50 });
+            AOS.init({ once: true, offset: 80, duration: 1100, easing: "ease-out-cubic" });
             /* ==========================================================
                النصوص العربية والإنجليزية
                أي عنصر HTML يحمل data-i18n يأخذ نصه من هذا الكائن.
@@ -1279,7 +1279,7 @@
                     { threshold: 0.1 },
                 );
                 document.querySelectorAll(".scroll-reveal").forEach((el, i) => {
-                    el.style.transitionDelay = `${Math.min(i % 3, 2) * 80}ms`;
+                    el.style.transitionDelay = `${Math.min(i % 3, 2) * 140}ms`;
                     obs.observe(el);
                 });
             }
