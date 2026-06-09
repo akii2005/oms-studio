@@ -636,13 +636,13 @@
                         </h3></a
                     >
                     <a
-                        href="#gallery-children"
+                        href="#gallery-children-weddings"
                         class="internal-link service-card bg-white border border-gray-200 rounded-2xl p-6"
                         ><i class="fa-regular fa-face-smile text-xl mb-4"></i>
                         <h3 data-i18n="service_children" class="font-bold">تصوير الأطفال</h3></a
                     >
                     <a
-                        href="#gallery-portraits"
+                        href="#gallery-portraits-personal"
                         class="internal-link service-card bg-white border border-gray-200 rounded-2xl p-6"
                         ><i class="fa-regular fa-user text-xl mb-4"></i>
                         <h3 data-i18n="service_portraits" class="font-bold">تصوير البورتريه</h3></a
@@ -656,13 +656,13 @@
                         </h3></a
                     >
                     <a
-                        href="#gallery-weddings"
+                        href="#gallery-children-weddings"
                         class="internal-link service-card bg-white border border-gray-200 rounded-2xl p-6"
                         ><i class="fa-regular fa-heart text-xl mb-4"></i>
                         <h3 data-i18n="service_weddings" class="font-bold">حفلات الزفاف</h3></a
                     >
                     <a
-                        href="#gallery-personal"
+                        href="#gallery-portraits-personal"
                         class="internal-link service-card bg-white border border-gray-200 rounded-2xl p-6"
                         ><i class="fa-regular fa-images text-xl mb-4"></i>
                         <h3 data-i18n="service_personal" class="font-bold">الجلسات الشخصية</h3></a
@@ -673,8 +673,8 @@
 
         <!-- ==========================================================
              الأعمال المختارة
-             لا تحتاج لإضافة بطاقات الصور يدوياً. الجافاسكربت ينشئ 6 صور
-             لكل تصنيف تلقائياً بناءً على أسماء الملفات داخل assets/works.
+             لا تحتاج لإضافة بطاقات الصور يدوياً. الجافاسكربت يعرض 6 صور
+             لكل تصنيف داخل الأعمال المختارة، بما في ذلك التصنيفات المدمجة.
              مثال:
              assets/works/events-corporate/events-corporate-01.jpg
              إلى:
@@ -703,39 +703,25 @@
                 data-title-en="Events & Corporate Photography"
             ></div>
             <div
-                id="gallery-children"
+                id="gallery-children-weddings"
                 class="mb-20 gallery-category"
-                data-gallery="children"
-                data-title-ar="تصوير الأطفال"
-                data-title-en="Children's Photography"
+                data-gallery="children-weddings"
+                data-title-ar="تصوير الأطفال وحفلات الزفاف"
+                data-title-en="Children & Wedding Photography"
             ></div>
             <div
-                id="gallery-portraits"
+                id="gallery-portraits-personal"
                 class="mb-20 gallery-category"
-                data-gallery="portraits"
-                data-title-ar="تصوير البورتريه"
-                data-title-en="Portrait Photography"
+                data-gallery="portraits-personal"
+                data-title-ar="تصوير البورتريه والجلسات الشخصية"
+                data-title-en="Portrait & Personal Photography"
             ></div>
             <div
                 id="gallery-fashion"
-                class="mb-20 gallery-category"
+                class="mb-8 gallery-category"
                 data-gallery="fashion-commercial"
                 data-title-ar="الأزياء والتصوير التجاري"
                 data-title-en="Fashion & Commercial Photography"
-            ></div>
-            <div
-                id="gallery-weddings"
-                class="mb-20 gallery-category"
-                data-gallery="weddings"
-                data-title-ar="حفلات الزفاف"
-                data-title-en="Wedding Photography"
-            ></div>
-            <div
-                id="gallery-personal"
-                class="mb-8 gallery-category"
-                data-gallery="personal"
-                data-title-ar="الجلسات الشخصية"
-                data-title-en="Personal Photography"
             ></div>
         </section>
 
@@ -1190,35 +1176,50 @@
                 applyLanguage(currentLang === "ar" ? "en" : "ar");
 
             /* ==========================================================
-               مجلدات صور الأعمال
-               لكل تصنيف 6 صور مرقمة من 01 إلى 06.
-               لإضافة تصنيف جديد: أنشئ مجلد جديد، ثم أضف اسمه هنا،
+               صور الأعمال المختارة
+               كل تصنيف يعرض 6 صور، والتصنيفات المدمجة تأخذ 3 صور من كل مجلد.
+               لإضافة تصنيف جديد: أضف قائمة الصور هنا،
                وبعدها أضف عنصر gallery-category داخل قسم #works.
                ========================================================== */
-            const galleryFolders = {
-                "events-corporate": "events-corporate",
-                children: "children",
-                portraits: "portraits",
-                "fashion-commercial": "fashion-commercial",
-                weddings: "weddings",
-                personal: "personal",
+            const galleryImages = {
+                "events-corporate": Array.from(
+                    { length: 6 },
+                    (_, i) => `assets/works/events-corporate/events-corporate-${String(i + 1).padStart(2, "0")}.jpg`,
+                ),
+                "children-weddings": [
+                    "assets/works/children/children-01.jpg",
+                    "assets/works/children/children-02.jpg",
+                    "assets/works/children/children-03.jpg",
+                    "assets/works/weddings/weddings-01.jpg",
+                    "assets/works/weddings/weddings-02.jpg",
+                    "assets/works/weddings/weddings-03.jpg",
+                ],
+                "portraits-personal": [
+                    "assets/works/portraits/portraits-01.jpg",
+                    "assets/works/portraits/portraits-02.jpg",
+                    "assets/works/portraits/portraits-03.jpg",
+                    "assets/works/personal/personal-01.jpg",
+                    "assets/works/personal/personal-02.jpg",
+                    "assets/works/personal/personal-03.jpg",
+                ],
+                "fashion-commercial": Array.from(
+                    { length: 6 },
+                    (_, i) => `assets/works/fashion-commercial/fashion-commercial-${String(i + 1).padStart(2, "0")}.jpg`,
+                ),
             };
             /* إنشاء بطاقات صور الأعمال تلقائياً بدل تكرار HTML يدوياً */
             function renderGalleries() {
                 document.querySelectorAll(".gallery-category").forEach((category) => {
-                    const folder = galleryFolders[category.dataset.gallery],
+                    const images = galleryImages[category.dataset.gallery],
                         title =
                             currentLang === "ar"
                                 ? category.dataset.titleAr
                                 : category.dataset.titleEn;
-                    category.innerHTML = `<div class="section-divider"><span class="section-divider-title">${title}</span></div><div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">${Array.from(
-                        { length: 6 },
-                        (_, i) => {
-                            const n = String(i + 1).padStart(2, "0"),
-                                src = `assets/works/${folder}/${folder}-${n}.jpg`;
+                    category.innerHTML = `<div class="section-divider"><span class="section-divider-title">${title}</span></div><div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">${images
+                        .map((src, i) => {
                             return `<button type="button" class="gallery-frame scroll-reveal rounded-xl md:rounded-2xl" data-full-src="${src}" aria-label="${title} ${i + 1}"><img loading="lazy" decoding="async" src="${src}" alt="${title} ${i + 1}"><span class="zoom-badge"><i class="fa-solid fa-magnifying-glass"></i></span><span class="fallback-label">${title}<br>${currentLang === "ar" ? "أضف الصورة في المسار المحدد" : "Add image to the configured path"}</span></button>`;
-                        },
-                    ).join("")}</div>`;
+                        })
+                        .join("")}</div>`;
                 });
                 bindImages();
                 bindLightbox();
