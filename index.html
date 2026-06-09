@@ -1,671 +1,1339 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl" id="html-root">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMS Studio | استوديو تصوير</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
-    <style>
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Alexandria', sans-serif;
-            background-color: #ffffff;
-            transition: all 0.3s ease;
-        }
-
-        html[dir="ltr"] body { font-family: 'Playfair Display', serif; }
-        .font-serif-en { font-family: 'Playfair Display', serif; }
-
-        /* OMS brand logo variants */
-        .brand-logo { display: block; width: 100%; height: auto; object-fit: contain; }
-        .nav-brand-logo { width: 138px; max-height: 46px; }
-        .hero-brand-logo { width: min(78vw, 390px); margin-inline: auto; margin-bottom: 20px; }
-        .section-brand-logo { width: min(56vw, 230px); margin-inline: auto; margin-bottom: 18px; }
-        .footer-brand-logo { width: min(58vw, 250px); margin-inline: auto; margin-bottom: 22px; }
-        .popup-brand-logo { width: 150px; margin-bottom: 12px; }
-
-        /* مساحة إضافية حتى لا يغطي الشريط العلوي بداية القسم عند الانتقال */
-        section, header { scroll-margin-top: 88px; }
-
-        /* تأثيرات الصور */
-        .img-hover-zoom {
-            overflow: hidden;
-            position: relative;
-            min-height: 260px;
-            background: #f3f4f6;
-        }
-
-        .img-hover-zoom img {
-            transition: transform 0.55s ease;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .img-hover-zoom:hover img { transform: scale(1.06); }
-
-        /* الفاصل الجديد: خطوط هادئة مع عنوان في المنتصف */
-        .section-divider {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            margin-bottom: 30px;
-        }
-
-        .section-divider::before,
-        .section-divider::after {
-            content: "";
-            height: 1px;
-            flex: 1;
-            background: linear-gradient(to left, transparent, #9ca3af, transparent);
-        }
-
-        .section-divider-title {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 20px;
-            border: 1px solid #d1d5db;
-            border-radius: 999px;
-            background-color: #ffffff;
-            color: #1f2937;
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 0.16em;
-            text-align: center;
-        }
-
-        /* بطاقات صور العملاء */
-        .client-logo-card {
-            min-height: 118px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 18px;
-            padding: 18px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .client-logo-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        .client-logo-card img {
-            width: 100%;
-            height: 76px;
-            object-fit: contain;
-        }
-
-
-        /* تحميل الصور بشكل أنيق */
-        .image-frame {
-            position: relative;
-            overflow: hidden;
-            background: #eef0f2;
-        }
-
-        .image-frame::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-            background: linear-gradient(100deg, #eef0f2 20%, #ffffff 45%, #eef0f2 70%);
-            background-size: 220% 100%;
-            animation: imageShimmer 1.25s linear infinite;
-            transition: opacity 0.35s ease;
-        }
-
-        .image-frame img {
-            opacity: 0;
-            transform: scale(1.025);
-            transition: opacity 0.65s ease, transform 0.75s ease;
-        }
-
-        .image-frame.is-loaded::before {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .image-frame.is-loaded img {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        @keyframes imageShimmer {
-            from { background-position: 120% 0; }
-            to { background-position: -120% 0; }
-        }
-
-        /* ظهور العناصر عند النزول */
-        .scroll-reveal {
-            opacity: 0;
-            transform: translateY(28px);
-            transition: opacity 0.75s ease, transform 0.75s ease;
-        }
-
-        .scroll-reveal.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-
-        /* نافذة التواصل المنبثقة */
-        .contact-popup-backdrop {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.58);
-            backdrop-filter: blur(7px);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .contact-popup-backdrop.is-open {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .contact-popup-panel {
-            width: min(100%, 460px);
-            border-radius: 24px;
-            background: #ffffff;
-            padding: 28px;
-            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
-            transform: translateY(18px) scale(0.98);
-            transition: transform 0.3s ease;
-        }
-
-        .contact-popup-backdrop.is-open .contact-popup-panel {
-            transform: translateY(0) scale(1);
-        }
-
-        .contact-link-card {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 14px;
-            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-        }
-
-        .contact-link-card:hover {
-            transform: translateY(-2px);
-            border-color: #cbd5e1;
-            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.07);
-        }
-
-        .contact-icon {
-            width: 42px;
-            height: 42px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            border-radius: 999px;
-            background: #f3f4f6;
-            color: #111827;
-        }
-
-
-
-        .brand-icon {
-            width: 18px;
-            height: 18px;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-
-        .contact-icon .brand-icon {
-            width: 20px;
-            height: 20px;
-        }
-
-        .footer-contact-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: color 0.25s ease, transform 0.25s ease;
-        }
-
-        .footer-contact-link:hover {
-            transform: translateY(-2px);
-        }
-
-        .footer-contact-link i {
-            font-size: 1rem;
-        }
-
-        .contact-icon i {
-            font-size: 1.15rem;
-        }
-
-        /* لون خفيف للشريط عند النزول */
-        .nav-scrolled {
-            background: rgba(17, 17, 17, 0.93);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
-        }
-    </style>
-</head>
-
-<body class="text-gray-900 antialiased">
-
-    <!-- القائمة العلوية -->
-    <nav id="mainNav" class="fixed w-full z-50 py-5 px-6 md:px-8 flex justify-between items-center text-white transition duration-300">
-        <a href="#home" class="internal-link" aria-label="OMS Studio home">
-            <img src="assets/branding/oms-studio-champagne-gold.png" alt="OMS Studio" class="brand-logo nav-brand-logo">
-        </a>
-
-        <div class="hidden md:flex gap-6 lg:gap-8 text-sm tracking-wide items-center">
-            <a href="#home" data-i18n="nav_home" class="internal-link hover:text-gray-300 transition">الشاشة الرئيسية</a>
-            <a href="#works" data-i18n="nav_works" class="internal-link hover:text-gray-300 transition">الأعمال</a>
-            <a href="drive.html" data-i18n="nav_archive" class="hover:text-yellow-300 transition text-yellow-400 font-bold">الأرشيف</a>
-            <a href="#clients" data-i18n="nav_clients" class="internal-link hover:text-gray-300 transition">العملاء</a>
-            <a href="#contact" data-i18n="nav_contact" class="internal-link hover:text-gray-300 transition">تواصل معنا</a>
-
-            <button id="langToggle" class="mx-2 text-xs font-bold bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition">
-                EN
-            </button>
-        </div>
-
-        <button type="button" data-open-contact-popup data-i18n="book_btn" class="border border-white hover:bg-white hover:text-black transition px-5 md:px-6 py-2 rounded-full text-xs md:text-sm font-bold">
-            احجز جلسة
-        </button>
-    </nav>
-
-    <!-- الشاشة الرئيسية -->
-    <header id="home" class="relative h-screen bg-[#111] flex items-center justify-center text-center px-6">
-        <div class="absolute inset-0 bg-[url('assets/hero/oms-home-hero.jpg')] bg-cover bg-center opacity-40"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/40"></div>
-
-        <div class="relative z-10 max-w-4xl mx-auto" data-aos="zoom-in" data-aos-duration="1000">
-            <img src="assets/branding/oms-studio-champagne-gold.png" alt="OMS Studio" class="brand-logo hero-brand-logo">
-            <p data-i18n="hero_label" class="text-xs md:text-sm text-gray-300 tracking-[0.35em] mb-5 uppercase">
-                Photography Studio
-            </p>
-
-            <h1 data-i18n="hero_title" class="text-5xl md:text-7xl font-serif-en text-white mb-6 leading-tight">
-                نحن استوديو OMS
-            </h1>
-
-            <p data-i18n="hero_desc" class="text-gray-200 text-lg md:text-2xl font-light tracking-wide">
-                نصور اللحظات، نصنع الذكريات.
-            </p>
-
-            <a href="#works" data-i18n="hero_cta" class="internal-link inline-block mt-10 border border-white/80 hover:bg-white hover:text-black text-white transition px-8 py-3 rounded-full text-sm font-bold">
-                شاهد أعمالنا
-            </a>
-        </div>
-    </header>
-
-    <!-- الأعمال -->
-    <section id="works" class="py-20 px-6 max-w-6xl mx-auto">
-        <div class="text-center mb-16" data-aos="fade-up">
-            <img src="assets/branding/oms-studio-matte-black.png" alt="OMS Studio" class="brand-logo section-brand-logo">
-            <h2 data-i18n="selected_works" class="text-4xl font-bold mb-3 font-serif-en">أعمال مختارة</h2>
-            <p data-i18n="works_subtitle" class="text-gray-500 text-lg">كل صورة تروي قصة.</p>
-        </div>
-
-        <!-- القسم الأول -->
-        <div class="mb-20" data-aos="fade-up">
-            <div class="section-divider">
-                <span class="section-divider-title" data-i18n="cat_fashion">تصوير الأزياء والتصوير التجاري</span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/fashion-commercial/fashion-commercial-01.jpg" alt="Commercial photography 1"></div>
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/fashion-commercial/fashion-commercial-02.jpg" alt="Commercial photography 2"></div>
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/fashion-commercial/fashion-commercial-03.jpg" alt="Commercial photography 3"></div>
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/fashion-commercial/fashion-commercial-04.jpg" alt="Commercial photography 4"></div>
-            </div>
-        </div>
-
-        <!-- القسم الثاني -->
-        <div class="mb-20" data-aos="fade-up">
-            <div class="section-divider">
-                <span class="section-divider-title" data-i18n="cat_events">تصوير الفعاليات والمناسبات الرسمية</span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/events-corporate/events-corporate-01.jpg" alt="Event photography 1"></div>
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/events-corporate/events-corporate-02.jpg" alt="Event photography 2"></div>
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl sm:col-span-2 sm:w-[calc(50%-0.625rem)] sm:justify-self-center"><img loading="lazy" decoding="async" src="assets/works/events-corporate/events-corporate-03.jpg" alt="Event photography 3"></div>
-            </div>
-        </div>
-
-        <!-- القسم الثالث -->
-        <div class="mb-20" data-aos="fade-up">
-            <div class="section-divider">
-                <span class="section-divider-title" data-i18n="cat_sports">التصوير الرياضي والحركي</span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/sports-action/sports-action-01.jpg" alt="Sports photography 1"></div>
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/sports-action/sports-action-02.jpg" alt="Sports photography 2"></div>
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/sports-action/sports-action-03.jpg" alt="Sports photography 3"></div>
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl"><img loading="lazy" decoding="async" src="assets/works/sports-action/sports-action-04.jpg" alt="Sports photography 4"></div>
-            </div>
-        </div>
-
-
-        <!-- القسم الرابع -->
-        <div class="mb-20" data-aos="fade-up">
-            <div class="section-divider">
-                <span class="section-divider-title" data-i18n="cat_children_wedding">تصوير الأطفال وحفلات الزفاف</span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl">
-                    <img loading="lazy" decoding="async" src="assets/works/children-wedding/children-wedding-01.jpg" alt="Children and wedding photography 1">
-                </div>
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl">
-                    <img loading="lazy" decoding="async" src="assets/works/children-wedding/children-wedding-02.jpg" alt="Children and wedding photography 2">
-                </div>
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl">
-                    <img loading="lazy" decoding="async" src="assets/works/children-wedding/children-wedding-03.jpg" alt="Children and wedding photography 3">
-                </div>
-                <div class="img-hover-zoom image-frame scroll-reveal rounded-2xl">
-                    <img loading="lazy" decoding="async" src="assets/works/children-wedding/children-wedding-04.jpg" alt="Children and wedding photography 4">
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center mt-12" data-aos="zoom-in">
-            <a href="drive.html" data-i18n="btn_archive_full" class="inline-block bg-gray-900 hover:bg-gray-800 text-white font-bold py-4 px-10 rounded-full transition shadow-lg">
-                تصفح الأرشيف الكامل
-            </a>
-        </div>
-    </section>
-
-    <!-- العملاء: استبدل المسارات الستة بصورك -->
-    <section id="clients" class="bg-gray-50 py-20">
-        <div class="max-w-6xl mx-auto px-6 text-center">
-            <h2 data-i18n="clients_title" class="text-sm font-bold tracking-widest text-gray-400 uppercase mb-4">
-                عملاء وثقوا بنا
-            </h2>
-
-            <p data-i18n="clients_subtitle" class="text-gray-500 mb-10">
-                بعض الجهات التي سعدنا بالعمل معها
-            </p>
-
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-5">
-                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-01.png" alt="Client logo 1"></div>
-                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-02.png" alt="Client logo 2"></div>
-                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-03.png" alt="Client logo 3"></div>
-                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-04.png" alt="Client logo 4"></div>
-                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-05.png" alt="Client logo 5"></div>
-                <div class="client-logo-card image-frame scroll-reveal"><img loading="lazy" decoding="async" src="assets/clients/client-logo-06.png" alt="Client logo 6"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- التواصل -->
-    <footer id="contact" class="bg-black text-white text-center py-16">
-        <img src="assets/branding/oms-studio-champagne-gold.png" alt="OMS Studio" class="brand-logo footer-brand-logo">
-        <h2 data-i18n="contact_title" class="text-3xl font-serif-en mb-5">دعنا نصنع الإبداع معاً</h2>
-        <p data-i18n="contact_subtitle" class="text-gray-500 mb-8">تواصل معنا عبر القناة المناسبة لك</p>
-
-        <!-- استبدل رقم الواتس واسم حساب الإنستغرام ببياناتك -->
-        <div class="flex flex-wrap justify-center items-center gap-5 md:gap-8 mb-10 text-sm">
-            <a href="mailto:studiooms3@gmail.com" class="footer-contact-link text-gray-300 hover:text-white">
-                <i class="fa-regular fa-envelope" aria-hidden="true"></i>
-                <span>studiooms3@gmail.com</span>
-            </a>
-
-            <a href="https://instagram.com/om1sf" target="_blank" rel="noopener noreferrer" class="footer-contact-link text-gray-300 hover:text-white">
-                <i class="fa-brands fa-instagram" aria-hidden="true"></i>
-                <span>om1sf</span>
-            </a>
-
-            <a href="https://wa.me/60143009203" target="_blank" rel="noopener noreferrer" class="footer-contact-link text-gray-300 hover:text-white">
-                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-                <span data-i18n="whatsapp_label">واتساب</span>
-            </a>
-        </div>
-
-        <p data-i18n="footer" class="text-xs text-gray-600">© 2026 OMS Studio. جميع الحقوق محفوظة.</p>
-    </footer>
-
-    <!-- نافذة الحجز المنبثقة -->
-    <div id="contactPopup" class="contact-popup-backdrop" aria-hidden="true">
-        <div class="contact-popup-panel" role="dialog" aria-modal="true" aria-labelledby="contactPopupTitle">
-            <div class="flex justify-between items-start gap-4 mb-7">
-                <div>
-                    <img src="assets/branding/oms-studio-matte-black.png" alt="OMS Studio" class="brand-logo popup-brand-logo">
-                    <p data-i18n="popup_label" class="text-xs text-gray-400 tracking-[0.24em] uppercase mb-2">OMS Studio</p>
-                    <h2 id="contactPopupTitle" data-i18n="popup_title" class="text-2xl font-bold text-gray-900">احجز جلستك</h2>
-                    <p data-i18n="popup_desc" class="text-sm text-gray-500 mt-2">اختر طريقة التواصل المناسبة لك</p>
-                </div>
-
-                <button type="button" data-close-contact-popup aria-label="Close" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 transition text-xl leading-none">
-                    ×
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>OMS Studio | Photography Studio</title>
+
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+            rel="stylesheet"
+        />
+        <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+        <style>
+            /* ==========================================================
+               1) ألوان الهوية والإعدادات العامة
+               - عدّل الألوان هنا إذا رغبت بتغيير طابع الموقع بالكامل.
+               - اللون الذهبي محفوظ كمتغير لاستخدامه عند التوسع لاحقاً.
+               ========================================================== */
+            :root {
+                --ink: #111111;
+                --soft: #f7f6f3;
+                --gold: #d6b476;
+            }
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                font-family: "Alexandria", sans-serif;
+                background: #fff;
+                color: #111827;
+            }
+            html[dir="ltr"] body {
+                font-family: "Alexandria", sans-serif;
+            }
+            .font-serif-en {
+                font-family: "Playfair Display", serif;
+            }
+            section,
+            header,
+            footer {
+                scroll-margin-top: 86px;
+            }
+
+            /* ==========================================================
+               2) مقاسات شعارات OMS Studio
+               توجد نسختان من الشعار داخل assets/branding:
+               - oms-studio-champagne-gold.png للخلفيات الداكنة
+               - oms-studio-matte-black.png للخلفيات الفاتحة
+               ========================================================== */
+            .brand-logo {
+                display: block;
+                width: 100%;
+                height: auto;
+                object-fit: contain;
+            }
+            .nav-brand-logo {
+                width: 138px;
+                max-height: 46px;
+            }
+            .hero-brand-logo {
+                width: min(78vw, 390px);
+                margin-inline: auto;
+                margin-bottom: 20px;
+            }
+            .section-brand-logo {
+                width: min(56vw, 230px);
+                margin-inline: auto;
+                margin-bottom: 18px;
+            }
+            .footer-brand-logo {
+                width: min(58vw, 250px);
+                margin-inline: auto;
+                margin-bottom: 22px;
+            }
+            .popup-brand-logo {
+                width: 150px;
+                margin-bottom: 12px;
+            }
+
+            /* خلفية القائمة العلوية بعد النزول من الشاشة الرئيسية */
+            .nav-scrolled {
+                background: rgba(17, 17, 17, 0.94);
+                backdrop-filter: blur(12px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+            }
+            /* الفاصل الهادئ المستخدم بين تصنيفات معرض الأعمال */
+            .section-divider {
+                display: flex;
+                align-items: center;
+                gap: 18px;
+                margin-bottom: 28px;
+            }
+            .section-divider::before,
+            .section-divider::after {
+                content: "";
+                height: 1px;
+                flex: 1;
+                background: linear-gradient(to left, transparent, #9ca3af, transparent);
+            }
+            .section-divider-title {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 10px 20px;
+                border: 1px solid #d1d5db;
+                border-radius: 999px;
+                background: #fff;
+                color: #1f2937;
+                font-size: 0.78rem;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                text-align: center;
+            }
+
+            /* بطاقات الأقسام: عني، الخدمات، المميزات والعملاء */
+            .soft-panel {
+                background: linear-gradient(135deg, #fafafa, #f3f4f6);
+                border: 1px solid #e5e7eb;
+            }
+            .service-card,
+            .benefit-card,
+            /* بطاقات شعارات العملاء */
+            .client-logo-card {
+                transition:
+                    transform 0.28s ease,
+                    box-shadow 0.28s ease,
+                    border-color 0.28s ease;
+            }
+            .service-card:hover,
+            .benefit-card:hover,
+            .client-logo-card:hover {
+                transform: translateY(-5px);
+                border-color: #d1d5db;
+                box-shadow: 0 16px 34px rgba(0, 0, 0, 0.08);
+            }
+
+            /* ==========================================================
+               3) معرض الأعمال
+               - جميع الصور تظهر بمقاس مربع باستخدام aspect-ratio.
+               - عند الضغط على الصورة تُفتح بحجم أكبر داخل Lightbox.
+               - إذا كانت الصورة غير موجودة يظهر تنبيه مرتب بدل صورة مكسورة.
+               ========================================================== */
+            .gallery-frame {
+                position: relative;
+                aspect-ratio: 1/1;
+                overflow: hidden;
+                background: #eef0f2;
+                cursor: zoom-in;
+            }
+            .gallery-frame::before,
+            .image-frame::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                z-index: 1;
+                background: linear-gradient(100deg, #eef0f2 20%, #fff 45%, #eef0f2 70%);
+                background-size: 220% 100%;
+                animation: imageShimmer 1.25s linear infinite;
+                transition: opacity 0.35s ease;
+            }
+            .gallery-frame img,
+            .image-frame img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0;
+                transform: scale(1.025);
+                transition:
+                    opacity 0.65s ease,
+                    transform 0.75s ease;
+            }
+            .gallery-frame.is-loaded::before,
+            .image-frame.is-loaded::before {
+                opacity: 0;
+                pointer-events: none;
+            }
+            .gallery-frame.is-loaded img,
+            .image-frame.is-loaded img {
+                opacity: 1;
+                transform: scale(1);
+            }
+            .gallery-frame:hover img {
+                transform: scale(1.065);
+            }
+            .gallery-frame .zoom-badge {
+                position: absolute;
+                inset: auto 14px 14px auto;
+                z-index: 3;
+                width: 38px;
+                height: 38px;
+                border-radius: 999px;
+                display: grid;
+                place-items: center;
+                background: rgba(255, 255, 255, 0.88);
+                color: #111827;
+                opacity: 0;
+                transform: translateY(5px);
+                transition: 0.25s ease;
+            }
+            .gallery-frame:hover .zoom-badge {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .fallback-label {
+                position: absolute;
+                inset: 0;
+                display: none;
+                place-items: center;
+                padding: 18px;
+                text-align: center;
+                color: #6b7280;
+                font-size: 0.75rem;
+                line-height: 1.8;
+            }
+            .gallery-frame.has-error .fallback-label {
+                display: grid;
+            }
+            .gallery-frame.has-error::before {
+                display: none;
+            }
+
+            /* تأثير تحميل الصور قبل ظهورها */
+            @keyframes imageShimmer {
+                from {
+                    background-position: 120% 0;
+                }
+                to {
+                    background-position: -120% 0;
+                }
+            }
+            /* ظهور تدريجي للعناصر عند النزول في الصفحة */
+            .scroll-reveal {
+                opacity: 0;
+                transform: translateY(26px);
+                transition:
+                    opacity 0.75s ease,
+                    transform 0.75s ease;
+            }
+            .scroll-reveal.is-visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            /* ==========================================================
+               4) بانر الأرشيف المستطيل
+               لتغيير صورة الخلفية عدّل المسار داخل قسم #archive في HTML.
+               ========================================================== */
+            .archive-banner {
+                position: relative;
+                overflow: hidden;
+                min-height: 300px;
+                border-radius: 28px;
+                background: #111;
+            }
+            .archive-banner-bg {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0.43;
+                transition: transform 0.7s ease;
+            }
+            .archive-banner:hover .archive-banner-bg {
+                transform: scale(1.045);
+            }
+            .archive-banner::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    90deg,
+                    rgba(0, 0, 0, 0.92),
+                    rgba(0, 0, 0, 0.45),
+                    rgba(0, 0, 0, 0.64)
+                );
+            }
+
+            .client-logo-card {
+                min-height: 118px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #fff;
+                border: 1px solid #e5e7eb;
+                border-radius: 18px;
+                padding: 18px;
+            }
+            .client-logo-card img {
+                width: 100%;
+                height: 76px;
+                object-fit: contain;
+            }
+
+            /* ==========================================================
+               5) النوافذ المنبثقة
+               - Contact Popup: خيارات التواصل والحجز
+               - Lightbox: تكبير صور الأعمال
+               ========================================================== */
+            .contact-popup-backdrop,
+            .lightbox-backdrop {
+                position: fixed;
+                inset: 0;
+                z-index: 100;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                background: rgba(0, 0, 0, 0.72);
+                backdrop-filter: blur(8px);
+                opacity: 0;
+                visibility: hidden;
+                transition:
+                    opacity 0.3s ease,
+                    visibility 0.3s ease;
+            }
+            .contact-popup-backdrop.is-open,
+            .lightbox-backdrop.is-open {
+                opacity: 1;
+                visibility: visible;
+            }
+            .contact-popup-panel {
+                width: min(100%, 460px);
+                border-radius: 24px;
+                background: #fff;
+                padding: 28px;
+                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+                transform: translateY(18px) scale(0.98);
+                transition: transform 0.3s ease;
+            }
+            .contact-popup-backdrop.is-open .contact-popup-panel {
+                transform: translateY(0) scale(1);
+            }
+            .contact-link-card {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                border: 1px solid #e5e7eb;
+                border-radius: 16px;
+                padding: 14px;
+                transition: 0.25s ease;
+            }
+            .contact-link-card:hover {
+                transform: translateY(-2px);
+                border-color: #cbd5e1;
+                box-shadow: 0 10px 22px rgba(0, 0, 0, 0.07);
+            }
+            .contact-icon {
+                width: 42px;
+                height: 42px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                border-radius: 999px;
+                background: #f3f4f6;
+                color: #111827;
+            }
+            .footer-contact-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: 0.25s ease;
+            }
+            .footer-contact-link:hover {
+                transform: translateY(-2px);
+            }
+            .lightbox-panel {
+                position: relative;
+                max-width: min(1100px, 94vw);
+                max-height: 88vh;
+            }
+            .lightbox-panel img {
+                max-width: 100%;
+                max-height: 88vh;
+                display: block;
+                border-radius: 18px;
+                box-shadow: 0 22px 70px rgba(0, 0, 0, 0.45);
+            }
+            .lightbox-close {
+                position: absolute;
+                top: -14px;
+                right: -14px;
+                width: 42px;
+                height: 42px;
+                border-radius: 999px;
+                background: #fff;
+                color: #111;
+                font-size: 24px;
+                line-height: 1;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+            }
+        </style>
+    </head>
+    <body class="text-gray-900 antialiased">
+        <!-- ==========================================================
+             القائمة العلوية
+             روابط الأقسام الداخلية تبدأ بعلامة # ولا تعيد تحميل الصفحة.
+             رابط الأرشيف يفتح drive.html كصفحة مستقلة.
+             ========================================================== -->
+        <nav
+            id="mainNav"
+            class="fixed w-full z-50 py-4 px-5 md:px-8 flex justify-between items-center text-white transition duration-300"
+        >
+            <a href="#home" class="internal-link" aria-label="OMS Studio home"
+                ><img
+                    src="assets/branding/oms-studio-champagne-gold.png"
+                    alt="OMS Studio"
+                    class="brand-logo nav-brand-logo"
+            /></a>
+            <div
+                class="hidden lg:flex gap-5 xl:gap-7 text-xs xl:text-sm tracking-wide items-center"
+            >
+                <a
+                    href="#home"
+                    data-i18n="nav_home"
+                    class="internal-link hover:text-gray-300 transition"
+                    >الرئيسية</a
+                >
+                <a
+                    href="#about"
+                    data-i18n="nav_about"
+                    class="internal-link hover:text-gray-300 transition"
+                    >عني</a
+                >
+                <a
+                    href="#services"
+                    data-i18n="nav_services"
+                    class="internal-link hover:text-gray-300 transition"
+                    >الخدمات</a
+                >
+                <a
+                    href="#works"
+                    data-i18n="nav_works"
+                    class="internal-link hover:text-gray-300 transition"
+                    >الأعمال</a
+                >
+                <a
+                    href="drive.html"
+                    data-i18n="nav_archive"
+                    class="hover:text-yellow-300 transition text-yellow-400 font-bold"
+                    >الأرشيف</a
+                >
+                <a
+                    href="#clients"
+                    data-i18n="nav_clients"
+                    class="internal-link hover:text-gray-300 transition"
+                    >العملاء</a
+                >
+                <a
+                    href="#contact"
+                    data-i18n="nav_contact"
+                    class="internal-link hover:text-gray-300 transition"
+                    >تواصل معنا</a
+                >
+                <button
+                    id="langToggle"
+                    class="mx-1 text-xs font-bold bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition"
+                >
+                    EN
                 </button>
             </div>
-
-            <div class="space-y-3">
-                <a href="https://wa.me/60143009203" target="_blank" rel="noopener noreferrer" class="contact-link-card">
-                    <span class="contact-icon" aria-hidden="true"><i class="fa-brands fa-whatsapp"></i></span>
-                    <span>
-                        <span data-i18n="popup_whatsapp" class="block text-sm font-bold text-gray-900">تواصل عبر واتساب</span>
-                        <span data-i18n="popup_whatsapp_sub" class="block text-xs text-gray-500 mt-1">ابدأ محادثة مباشرة معنا</span>
-                    </span>
-                </a>
-
-                <a href="https://instagram.com/om1sf" target="_blank" rel="noopener noreferrer" class="contact-link-card">
-                    <span class="contact-icon" aria-hidden="true"><i class="fa-brands fa-instagram"></i></span>
-                    <span>
-                        <span data-i18n="popup_instagram" class="block text-sm font-bold text-gray-900">زور حسابنا في إنستغرام</span>
-                        <span class="block text-xs text-gray-500 mt-1">om1sf</span>
-                    </span>
-                </a>
-
-                <a href="mailto:studiooms3@gmail.com" class="contact-link-card">
-                    <span class="contact-icon" aria-hidden="true"><i class="fa-regular fa-envelope"></i></span>
-                    <span>
-                        <span data-i18n="popup_email" class="block text-sm font-bold text-gray-900">راسلنا عبر البريد الإلكتروني</span>
-                        <span class="block text-xs text-gray-500 mt-1">studiooms3@gmail.com</span>
-                    </span>
-                </a>
+            <div class="flex items-center gap-2">
+                <button
+                    type="button"
+                    data-open-contact-popup
+                    data-i18n="book_btn"
+                    class="border border-white hover:bg-white hover:text-black transition px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-bold"
+                >
+                    احجز جلسة
+                </button>
+                <button
+                    id="mobileMenuBtn"
+                    type="button"
+                    class="lg:hidden w-10 h-10 rounded-full border border-white/50"
+                    aria-label="Menu"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+        <!-- قائمة الجوال: تظهر عند الضغط على أيقونة القائمة -->
+        <div
+            id="mobileMenu"
+            class="fixed z-40 top-[72px] left-4 right-4 rounded-2xl bg-black/95 text-white p-5 hidden lg:hidden shadow-2xl"
+        >
+            <div class="grid gap-4 text-sm">
+                <a href="#about" data-i18n="nav_about" class="internal-link">عني</a
+                ><a href="#services" data-i18n="nav_services" class="internal-link">الخدمات</a
+                ><a href="#works" data-i18n="nav_works" class="internal-link">الأعمال</a
+                ><a href="drive.html" data-i18n="nav_archive">الأرشيف</a
+                ><a href="#clients" data-i18n="nav_clients" class="internal-link">العملاء</a
+                ><a href="#contact" data-i18n="nav_contact" class="internal-link">تواصل معنا</a>
+                <button
+                    id="mobileLangToggle"
+                    class="justify-self-start text-xs font-bold bg-white/15 px-4 py-2 rounded-full"
+                >
+                    EN
+                </button>
             </div>
         </div>
-    </div>
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init({ once: true, offset: 50 });
+        <!-- ==========================================================
+             الشاشة الرئيسية Hero
+             لتغيير صورة الخلفية استبدل الملف:
+             assets/hero/oms-home-hero.jpg
+             ========================================================== -->
+        <header
+            id="home"
+            class="relative h-screen bg-[#111] flex items-center justify-center text-center px-6"
+        >
+            <div
+                class="absolute inset-0 bg-[url('assets/hero/oms-home-hero.jpg')] bg-cover bg-center opacity-40"
+            ></div>
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-black/45"
+            ></div>
+            <div
+                class="relative z-10 max-w-4xl mx-auto"
+                data-aos="zoom-in"
+                data-aos-duration="1000"
+            >
+                <img
+                    src="assets/branding/oms-studio-champagne-gold.png"
+                    alt="OMS Studio"
+                    class="brand-logo hero-brand-logo"
+                />
+                <p
+                    data-i18n="hero_label"
+                    class="text-xs md:text-sm text-gray-300 tracking-[.35em] mb-5 uppercase"
+                >
+                    Photography Studio
+                </p>
+                <h1
+                    data-i18n="hero_title"
+                    class="text-5xl md:text-7xl font-serif-en text-white mb-6 leading-tight"
+                >
+                    نحن استوديو OMS
+                </h1>
+                <p
+                    data-i18n="hero_desc"
+                    class="text-gray-200 text-lg md:text-2xl font-light tracking-wide"
+                >
+                    نحوّل اللحظات إلى صور تبقى.
+                </p>
+                <a
+                    href="#works"
+                    data-i18n="hero_cta"
+                    class="internal-link inline-block mt-10 border border-white/80 hover:bg-white hover:text-black text-white transition px-8 py-3 rounded-full text-sm font-bold"
+                    >شاهد أعمالنا</a
+                >
+            </div>
+        </header>
 
-        const translations = {
-            ar: {
-                nav_home: "الشاشة الرئيسية",
-                nav_works: "الأعمال",
-                nav_archive: "الأرشيف",
-                nav_clients: "العملاء",
-                nav_contact: "تواصل معنا",
-                book_btn: "احجز جلسة",
-                hero_label: "استوديو تصوير",
-                hero_title: "نحن استوديو OMS",
-                hero_desc: "نصور اللحظات، نصنع الذكريات.",
-                hero_cta: "شاهد أعمالنا",
-                selected_works: "أعمال مختارة",
-                works_subtitle: "كل صورة تروي قصة.",
-                cat_fashion: "تصوير الأزياء والتصوير التجاري",
-                cat_events: "تصوير الفعاليات والمناسبات الرسمية",
-                cat_sports: "التصوير الرياضي والحركي",
-                cat_children_wedding: "تصوير الأطفال وحفلات الزفاف",
-                btn_archive_full: "تصفح الأرشيف الكامل",
-                clients_title: "عملاء وثقوا بنا",
-                clients_subtitle: "بعض الجهات التي سعدنا بالعمل معها",
-                contact_title: "دعنا نصنع الإبداع معاً",
-                contact_subtitle: "تواصل معنا عبر القناة المناسبة لك",
-                whatsapp_label: "واتساب",
-                popup_label: "OMS Studio",
-                popup_title: "احجز جلستك",
-                popup_desc: "اختر طريقة التواصل المناسبة لك",
-                popup_whatsapp: "تواصل عبر واتساب",
-                popup_whatsapp_sub: "ابدأ محادثة مباشرة معنا",
-                popup_instagram: "زور حسابنا في إنستغرام",
-                popup_email: "راسلنا عبر البريد الإلكتروني",
-                footer: "© 2026 OMS Studio. جميع الحقوق محفوظة."
-            },
-            en: {
-                nav_home: "Home",
-                nav_works: "Works",
-                nav_archive: "Archive",
-                nav_clients: "Clients",
-                nav_contact: "Contact",
-                book_btn: "Book Session",
-                hero_label: "Photography Studio",
-                hero_title: "We are OMS Studio",
-                hero_desc: "Capture, Create, Connect.",
-                hero_cta: "View Our Work",
-                selected_works: "Selected Works",
-                works_subtitle: "Every photograph tells a story.",
-                cat_fashion: "FASHION & COMMERCIAL PHOTOGRAPHY",
-                cat_events: "EVENTS & CORPORATE PHOTOGRAPHY",
-                cat_sports: "SPORTS & ACTION PHOTOGRAPHY",
-                cat_children_wedding: "CHILDREN\'S & WEDDING PHOTOGRAPHY",
-                btn_archive_full: "Explore Full Archive",
-                clients_title: "Clients We've Worked With",
-                clients_subtitle: "A selection of clients we have been pleased to work with",
-                contact_title: "Let's Create Together",
-                contact_subtitle: "Reach us through your preferred channel",
-                whatsapp_label: "WhatsApp",
-                popup_label: "OMS Studio",
-                popup_title: "Book Your Session",
-                popup_desc: "Choose the contact method that suits you",
-                popup_whatsapp: "Chat with us on WhatsApp",
-                popup_whatsapp_sub: "Start a direct conversation with us",
-                popup_instagram: "Visit our Instagram",
-                popup_email: "Email us",
-                footer: "© 2026 OMS Studio. All rights reserved."
-            }
-        };
+        <!-- ==========================================================
+             قسم عني About Me
+             غيّر النص العربي والإنجليزي من كائن translations أسفل الملف
+             حتى تبقى اللغتان متطابقتين عند الضغط على زر تغيير اللغة.
+             ========================================================== -->
+        <section id="about" class="py-20 md:py-24 px-6">
+            <div
+                class="max-w-6xl mx-auto grid md:grid-cols-[.9fr_1.1fr] gap-10 md:gap-16 items-center"
+            >
+                <div class="soft-panel rounded-[28px] p-8 md:p-11" data-aos="fade-up">
+                    <p
+                        data-i18n="about_eyebrow"
+                        class="text-xs font-bold tracking-[.22em] text-gray-400 uppercase mb-4"
+                    >
+                        About OMS Studio
+                    </p>
+                    <h2
+                        data-i18n="about_title"
+                        class="text-3xl md:text-4xl font-bold leading-tight mb-6"
+                    >
+                        أنا عمر، مؤسس OMS Studio
+                    </h2>
+                    <p data-i18n="about_text" class="text-gray-600 leading-8 text-sm md:text-base">
+                        أؤمن أن الصورة الجميلة ليست مجرد لقطة، بل ذكرى تحمل إحساس اللحظة وتفاصيلها.
+                        في OMS Studio أقدّم تجربة تصوير مريحة ومدروسة للأفراد والعائلات والعلامات
+                        التجارية، بهدف صناعة صور أنيقة وطبيعية تحكي قصتكم بأسلوب يليق بكم.
+                    </p>
+                </div>
+                <div data-aos="fade-up" data-aos-delay="100">
+                    <img
+                        src="assets/branding/oms-studio-matte-black.png"
+                        alt="OMS Studio"
+                        class="brand-logo section-brand-logo !mx-0"
+                    />
+                    <h3
+                        data-i18n="about_quote"
+                        class="text-3xl md:text-5xl font-serif-en leading-tight text-gray-900"
+                    >
+                        Every image should feel personal, polished and timeless.
+                    </h3>
+                    <p data-i18n="about_note" class="mt-6 text-gray-500 leading-8">
+                        نهتم بالتفاصيل من أول فكرة إلى تسليم الصور النهائية، مع الحفاظ على تجربة
+                        سلسة ونتيجة تعبّر عنكم.
+                    </p>
+                </div>
+            </div>
+        </section>
 
-        let currentLang = "ar";
-        const langToggleBtn = document.getElementById("langToggle");
-        const htmlRoot = document.getElementById("html-root");
-        const mainNav = document.getElementById("mainNav");
+        <!-- ==========================================================
+             خدمات التصوير
+             كل بطاقة تنقلك إلى معرض التصنيف المناسب داخل قسم الأعمال.
+             ========================================================== -->
+        <section id="services" class="bg-gray-50 py-20 md:py-24 px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12" data-aos="fade-up">
+                    <p
+                        data-i18n="services_eyebrow"
+                        class="text-xs font-bold tracking-[.25em] text-gray-400 uppercase mb-4"
+                    >
+                        Photography Services
+                    </p>
+                    <h2 data-i18n="services_title" class="text-4xl font-bold font-serif-en">
+                        خدمات التصوير
+                    </h2>
+                    <p data-i18n="services_subtitle" class="mt-4 text-gray-500">
+                        تغطيات وصور مصممة لتناسب قصتكم واحتياجكم.
+                    </p>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <a
+                        href="#gallery-events"
+                        class="internal-link service-card bg-white border border-gray-200 rounded-2xl p-6"
+                        ><i class="fa-regular fa-calendar-check text-xl mb-4"></i>
+                        <h3 data-i18n="service_events" class="font-bold">
+                            الفعاليات والتصوير المؤسسي
+                        </h3></a
+                    >
+                    <a
+                        href="#gallery-children"
+                        class="internal-link service-card bg-white border border-gray-200 rounded-2xl p-6"
+                        ><i class="fa-regular fa-face-smile text-xl mb-4"></i>
+                        <h3 data-i18n="service_children" class="font-bold">تصوير الأطفال</h3></a
+                    >
+                    <a
+                        href="#gallery-portraits"
+                        class="internal-link service-card bg-white border border-gray-200 rounded-2xl p-6"
+                        ><i class="fa-regular fa-user text-xl mb-4"></i>
+                        <h3 data-i18n="service_portraits" class="font-bold">تصوير البورتريه</h3></a
+                    >
+                    <a
+                        href="#gallery-fashion"
+                        class="internal-link service-card bg-white border border-gray-200 rounded-2xl p-6"
+                        ><i class="fa-solid fa-bag-shopping text-xl mb-4"></i>
+                        <h3 data-i18n="service_fashion" class="font-bold">
+                            الأزياء والتصوير التجاري
+                        </h3></a
+                    >
+                    <a
+                        href="#gallery-weddings"
+                        class="internal-link service-card bg-white border border-gray-200 rounded-2xl p-6"
+                        ><i class="fa-regular fa-heart text-xl mb-4"></i>
+                        <h3 data-i18n="service_weddings" class="font-bold">حفلات الزفاف</h3></a
+                    >
+                    <a
+                        href="#gallery-personal"
+                        class="internal-link service-card bg-white border border-gray-200 rounded-2xl p-6"
+                        ><i class="fa-regular fa-images text-xl mb-4"></i>
+                        <h3 data-i18n="service_personal" class="font-bold">الجلسات الشخصية</h3></a
+                    >
+                </div>
+            </div>
+        </section>
 
-        langToggleBtn.addEventListener("click", () => {
-            currentLang = currentLang === "ar" ? "en" : "ar";
-            htmlRoot.setAttribute("dir", currentLang === "ar" ? "rtl" : "ltr");
-            htmlRoot.setAttribute("lang", currentLang);
-            langToggleBtn.innerText = currentLang === "ar" ? "EN" : "عربي";
+        <!-- ==========================================================
+             الأعمال المختارة
+             لا تحتاج لإضافة بطاقات الصور يدوياً. الجافاسكربت ينشئ 6 صور
+             لكل تصنيف تلقائياً بناءً على أسماء الملفات داخل assets/works.
+             مثال:
+             assets/works/events-corporate/events-corporate-01.jpg
+             إلى:
+             assets/works/events-corporate/events-corporate-06.jpg
+             ========================================================== -->
+        <section id="works" class="py-20 md:py-24 px-6 max-w-6xl mx-auto">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <img
+                    src="assets/branding/oms-studio-matte-black.png"
+                    alt="OMS Studio"
+                    class="brand-logo section-brand-logo"
+                />
+                <h2 data-i18n="selected_works" class="text-4xl font-bold mb-3 font-serif-en">
+                    أعمال مختارة
+                </h2>
+                <p data-i18n="works_subtitle" class="text-gray-500 text-lg">
+                    مجموعة مختارة من اللحظات التي وثقناها بعدستنا.
+                </p>
+            </div>
 
-            document.querySelectorAll("[data-i18n]").forEach((el) => {
-                const key = el.getAttribute("data-i18n");
-                if (translations[currentLang][key]) {
-                    el.innerText = translations[currentLang][key];
-                }
-            });
-        });
+            <div
+                id="gallery-events"
+                class="mb-20 gallery-category"
+                data-gallery="events-corporate"
+                data-title-ar="الفعاليات والتصوير المؤسسي"
+                data-title-en="Events & Corporate Photography"
+            ></div>
+            <div
+                id="gallery-children"
+                class="mb-20 gallery-category"
+                data-gallery="children"
+                data-title-ar="تصوير الأطفال"
+                data-title-en="Children's Photography"
+            ></div>
+            <div
+                id="gallery-portraits"
+                class="mb-20 gallery-category"
+                data-gallery="portraits"
+                data-title-ar="تصوير البورتريه"
+                data-title-en="Portrait Photography"
+            ></div>
+            <div
+                id="gallery-fashion"
+                class="mb-20 gallery-category"
+                data-gallery="fashion-commercial"
+                data-title-ar="الأزياء والتصوير التجاري"
+                data-title-en="Fashion & Commercial Photography"
+            ></div>
+            <div
+                id="gallery-weddings"
+                class="mb-20 gallery-category"
+                data-gallery="weddings"
+                data-title-ar="حفلات الزفاف"
+                data-title-en="Wedding Photography"
+            ></div>
+            <div
+                id="gallery-personal"
+                class="mb-8 gallery-category"
+                data-gallery="personal"
+                data-title-ar="الجلسات الشخصية"
+                data-title-en="Personal Photography"
+            ></div>
+        </section>
 
-        /* الانتقال الناعم داخل الصفحة بدون إعادة تحميل */
-        document.querySelectorAll(".internal-link").forEach((link) => {
-            link.addEventListener("click", (event) => {
-                const targetId = link.getAttribute("href");
+        <!-- ==========================================================
+             لماذا تختار OMS Studio؟
+             بطاقات مختصرة تشرح القيمة التي يحصل عليها العميل.
+             ========================================================== -->
+        <section id="why-us" class="bg-[#111] text-white py-20 md:py-24 px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="max-w-3xl mb-12" data-aos="fade-up">
+                    <p
+                        data-i18n="why_eyebrow"
+                        class="text-xs font-bold tracking-[.25em] text-gray-400 uppercase mb-4"
+                    >
+                        Why OMS Studio
+                    </p>
+                    <h2 data-i18n="why_title" class="text-4xl font-bold font-serif-en">
+                        ماذا ستحصل عليه عند التصوير معنا؟
+                    </h2>
+                    <p data-i18n="why_subtitle" class="mt-5 text-gray-400 leading-8">
+                        نحرص على أن تكون التجربة مريحة والنتيجة متقنة، لأن الصور الناجحة تبدأ من
+                        الثقة والتفاصيل الصغيرة.
+                    </p>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="benefit-card rounded-2xl border border-white/15 bg-white/5 p-6">
+                        <i class="fa-solid fa-wand-magic-sparkles mb-4"></i>
+                        <h3 data-i18n="benefit_1" class="font-bold">أسلوب تصوير احترافي وإبداعي</h3>
+                    </div>
+                    <div class="benefit-card rounded-2xl border border-white/15 bg-white/5 p-6">
+                        <i class="fa-regular fa-image mb-4"></i>
+                        <h3 data-i18n="benefit_2" class="font-bold">صور معدّلة بجودة عالية</h3>
+                    </div>
+                    <div class="benefit-card rounded-2xl border border-white/15 bg-white/5 p-6">
+                        <i class="fa-regular fa-face-smile mb-4"></i>
+                        <h3 data-i18n="benefit_3" class="font-bold">جلسة مريحة وتجربة ممتعة</h3>
+                    </div>
+                    <div class="benefit-card rounded-2xl border border-white/15 bg-white/5 p-6">
+                        <i class="fa-solid fa-magnifying-glass mb-4"></i>
+                        <h3 data-i18n="benefit_4" class="font-bold">اهتمام بالتفاصيل</h3>
+                    </div>
+                    <div class="benefit-card rounded-2xl border border-white/15 bg-white/5 p-6">
+                        <i class="fa-regular fa-comments mb-4"></i>
+                        <h3 data-i18n="benefit_5" class="font-bold">خدمة مرنة وشخصية</h3>
+                    </div>
+                    <div class="benefit-card rounded-2xl border border-white/15 bg-white/5 p-6">
+                        <i class="fa-regular fa-clock mb-4"></i>
+                        <h3 data-i18n="benefit_6" class="font-bold">
+                            تسليم منظم وفي الوقت المناسب
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                if (!targetId || !targetId.startsWith("#")) return;
+        <!-- ==========================================================
+             بانر الأرشيف الكامل
+             يفتح صفحة drive.html التي تحتوي على روابط الصور والفيديوهات.
+             غيّر صورة الخلفية من المسار الموجود داخل وسم img أدناه.
+             ========================================================== -->
+        <section id="archive" class="py-20 md:py-24 px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="archive-banner shadow-xl" data-aos="zoom-in">
+                    <img
+                        src="assets/hero/oms-home-hero.jpg"
+                        alt="OMS Studio archive"
+                        class="archive-banner-bg"
+                    />
+                    <div class="relative z-10 min-h-[300px] flex items-center px-7 md:px-14 py-10">
+                        <div class="max-w-2xl text-white">
+                            <p
+                                data-i18n="archive_eyebrow"
+                                class="text-xs font-bold tracking-[.24em] text-gray-300 uppercase mb-4"
+                            >
+                                OMS Studio Archive
+                            </p>
+                            <h2
+                                data-i18n="archive_title"
+                                class="text-3xl md:text-5xl font-bold font-serif-en leading-tight"
+                            >
+                                شاهد المزيد في الأرشيف الكامل
+                            </h2>
+                            <p
+                                data-i18n="archive_desc"
+                                class="mt-5 text-sm md:text-base text-gray-200 leading-8"
+                            >
+                                استكشف مجموعة أوسع من الصور والفيديوهات، وتصفّح الأعمال المصنفة في
+                                صفحة واحدة مرتبة وسهلة الوصول.
+                            </p>
+                            <a
+                                href="drive.html"
+                                data-i18n="archive_cta"
+                                class="inline-flex items-center gap-3 mt-7 bg-white text-black hover:bg-gray-100 transition px-6 py-3 rounded-full text-sm font-bold"
+                                >تصفح الأرشيف <i class="fa-solid fa-arrow-up-right-from-square"></i
+                            ></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                const target = document.querySelector(targetId);
-                if (!target) return;
+        <!-- ==========================================================
+             شعارات العملاء
+             استبدل الصور الست داخل assets/clients مع الحفاظ على الأسماء:
+             client-logo-01.png إلى client-logo-06.png
+             ========================================================== -->
+        <section id="clients" class="bg-gray-50 py-20 px-6">
+            <div class="max-w-6xl mx-auto text-center">
+                <h2
+                    data-i18n="clients_title"
+                    class="text-sm font-bold tracking-widest text-gray-400 uppercase mb-4"
+                >
+                    عملاء وثقوا بنا
+                </h2>
+                <p data-i18n="clients_subtitle" class="text-gray-500 mb-10">
+                    بعض الجهات التي سعدنا بالعمل معها
+                </p>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-5">
+                    <div class="client-logo-card image-frame scroll-reveal">
+                        <img
+                            loading="lazy"
+                            decoding="async"
+                            src="assets/clients/client-logo-01.png"
+                            alt="Client logo 1"
+                        />
+                    </div>
+                    <div class="client-logo-card image-frame scroll-reveal">
+                        <img
+                            loading="lazy"
+                            decoding="async"
+                            src="assets/clients/client-logo-02.png"
+                            alt="Client logo 2"
+                        />
+                    </div>
+                    <div class="client-logo-card image-frame scroll-reveal">
+                        <img
+                            loading="lazy"
+                            decoding="async"
+                            src="assets/clients/client-logo-03.png"
+                            alt="Client logo 3"
+                        />
+                    </div>
+                    <div class="client-logo-card image-frame scroll-reveal">
+                        <img
+                            loading="lazy"
+                            decoding="async"
+                            src="assets/clients/client-logo-04.png"
+                            alt="Client logo 4"
+                        />
+                    </div>
+                    <div class="client-logo-card image-frame scroll-reveal">
+                        <img
+                            loading="lazy"
+                            decoding="async"
+                            src="assets/clients/client-logo-05.png"
+                            alt="Client logo 5"
+                        />
+                    </div>
+                    <div class="client-logo-card image-frame scroll-reveal">
+                        <img
+                            loading="lazy"
+                            decoding="async"
+                            src="assets/clients/client-logo-06.png"
+                            alt="Client logo 6"
+                        />
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                event.preventDefault();
-                target.scrollIntoView({ behavior: "smooth", block: "start" });
-            });
-        });
+        <!-- ==========================================================
+             بيانات التواصل
+             عند تغيير البريد أو إنستغرام أو واتساب عدّل الروابط هنا
+             وعدّلها أيضاً داخل نافذة الحجز المنبثقة الموجودة بعد الفوتر.
+             ========================================================== -->
+        <footer id="contact" class="bg-black text-white text-center py-16 px-6">
+            <img
+                src="assets/branding/oms-studio-champagne-gold.png"
+                alt="OMS Studio"
+                class="brand-logo footer-brand-logo"
+            />
+            <h2 data-i18n="contact_title" class="text-3xl font-serif-en mb-5">
+                دعنا نصنع الإبداع معاً
+            </h2>
+            <p data-i18n="contact_subtitle" class="text-gray-500 mb-8">
+                تواصل معنا عبر القناة المناسبة لك
+            </p>
+            <div class="flex flex-wrap justify-center items-center gap-5 md:gap-8 mb-10 text-sm">
+                <a
+                    href="mailto:studiooms3@gmail.com"
+                    class="footer-contact-link text-gray-300 hover:text-white"
+                    ><i class="fa-regular fa-envelope"></i><span>studiooms3@gmail.com</span></a
+                >
+                <a
+                    href="https://instagram.com/om1sf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="footer-contact-link text-gray-300 hover:text-white"
+                    ><i class="fa-brands fa-instagram"></i><span>om1sf</span></a
+                >
+                <a
+                    href="https://wa.me/60143009203"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="footer-contact-link text-gray-300 hover:text-white"
+                    ><i class="fa-brands fa-whatsapp"></i
+                    ><span data-i18n="whatsapp_label">واتساب</span></a
+                >
+            </div>
+            <p data-i18n="footer" class="text-xs text-gray-600">
+                © 2026 OMS Studio. جميع الحقوق محفوظة.
+            </p>
+        </footer>
 
+        <!-- نافذة الحجز المنبثقة: تظهر عند الضغط على زر احجز جلسة -->
+        <div id="contactPopup" class="contact-popup-backdrop" aria-hidden="true">
+            <div
+                class="contact-popup-panel"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="contactPopupTitle"
+            >
+                <div class="flex justify-between items-start gap-4 mb-7">
+                    <div>
+                        <img
+                            src="assets/branding/oms-studio-matte-black.png"
+                            alt="OMS Studio"
+                            class="brand-logo popup-brand-logo"
+                        />
+                        <p class="text-xs text-gray-400 tracking-[.24em] uppercase mb-2">
+                            OMS Studio
+                        </p>
+                        <h2
+                            id="contactPopupTitle"
+                            data-i18n="popup_title"
+                            class="text-2xl font-bold"
+                        >
+                            احجز جلستك
+                        </h2>
+                        <p data-i18n="popup_desc" class="text-sm text-gray-500 mt-2">
+                            اختر طريقة التواصل المناسبة لك
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        data-close-contact-popup
+                        aria-label="Close"
+                        class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 transition text-xl"
+                    >
+                        ×
+                    </button>
+                </div>
+                <div class="space-y-3">
+                    <a
+                        href="https://wa.me/60143009203"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="contact-link-card"
+                        ><span class="contact-icon"><i class="fa-brands fa-whatsapp"></i></span
+                        ><span
+                            ><span data-i18n="popup_whatsapp" class="block text-sm font-bold"
+                                >تواصل عبر واتساب</span
+                            ><span
+                                data-i18n="popup_whatsapp_sub"
+                                class="block text-xs text-gray-500 mt-1"
+                                >ابدأ محادثة مباشرة معنا</span
+                            ></span
+                        ></a
+                    >
+                    <a
+                        href="https://instagram.com/om1sf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="contact-link-card"
+                        ><span class="contact-icon"><i class="fa-brands fa-instagram"></i></span
+                        ><span
+                            ><span data-i18n="popup_instagram" class="block text-sm font-bold"
+                                >زور حسابنا في إنستغرام</span
+                            ><span class="block text-xs text-gray-500 mt-1">om1sf</span></span
+                        ></a
+                    >
+                    <a href="mailto:studiooms3@gmail.com" class="contact-link-card"
+                        ><span class="contact-icon"><i class="fa-regular fa-envelope"></i></span
+                        ><span
+                            ><span data-i18n="popup_email" class="block text-sm font-bold"
+                                >راسلنا عبر البريد الإلكتروني</span
+                            ><span class="block text-xs text-gray-500 mt-1"
+                                >studiooms3@gmail.com</span
+                            ></span
+                        ></a
+                    >
+                </div>
+            </div>
+        </div>
+        <!-- نافذة تكبير صور الأعمال -->
+        <div id="lightbox" class="lightbox-backdrop" aria-hidden="true">
+            <div class="lightbox-panel">
+                <button id="lightboxClose" class="lightbox-close" aria-label="Close">×</button
+                ><img id="lightboxImage" alt="Expanded photography work" />
+            </div>
+        </div>
 
-        /* إظهار الصور بعد اكتمال التحميل */
-        document.querySelectorAll(".image-frame img").forEach((image) => {
-            const frame = image.closest(".image-frame");
-
-            const markAsLoaded = () => {
-                frame.classList.add("is-loaded");
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <script>
+            /* تفعيل حركات الظهور الجاهزة من مكتبة AOS */
+            AOS.init({ once: true, offset: 50 });
+            /* ==========================================================
+               النصوص العربية والإنجليزية
+               أي عنصر HTML يحمل data-i18n يأخذ نصه من هذا الكائن.
+               عدّل النص في ar و en معاً حتى يظهر بشكل صحيح في اللغتين.
+               ========================================================== */
+            const translations = {
+                ar: {
+                    nav_home: "الرئيسية",
+                    nav_about: "عني",
+                    nav_services: "الخدمات",
+                    nav_works: "الأعمال",
+                    nav_archive: "الأرشيف",
+                    nav_clients: "العملاء",
+                    nav_contact: "تواصل معنا",
+                    book_btn: "احجز جلسة",
+                    hero_label: "استوديو تصوير",
+                    hero_title: "نحن استوديو OMS",
+                    hero_desc: "نحوّل اللحظات إلى صور تبقى.",
+                    hero_cta: "شاهد أعمالنا",
+                    about_eyebrow: "عن OMS Studio",
+                    about_title: "أنا عمر، مؤسس OMS Studio",
+                    about_text:
+                        "أؤمن أن الصورة الجميلة ليست مجرد لقطة، بل ذكرى تحمل إحساس اللحظة وتفاصيلها. في OMS Studio أقدّم تجربة تصوير مريحة ومدروسة للأفراد والعائلات والعلامات التجارية، بهدف صناعة صور أنيقة وطبيعية تحكي قصتكم بأسلوب يليق بكم.",
+                    about_quote: "كل صورة يجب أن تكون شخصية، متقنة وخالدة.",
+                    about_note:
+                        "نهتم بالتفاصيل من أول فكرة إلى تسليم الصور النهائية، مع الحفاظ على تجربة سلسة ونتيجة تعبّر عنكم.",
+                    services_eyebrow: "Photography Services",
+                    services_title: "خدمات التصوير",
+                    services_subtitle: "تغطيات وصور مصممة لتناسب قصتكم واحتياجكم.",
+                    service_events: "الفعاليات والتصوير المؤسسي",
+                    service_children: "تصوير الأطفال",
+                    service_portraits: "تصوير البورتريه",
+                    service_fashion: "الأزياء والتصوير التجاري",
+                    service_weddings: "حفلات الزفاف",
+                    service_personal: "الجلسات الشخصية",
+                    selected_works: "أعمال مختارة",
+                    works_subtitle: "مجموعة مختارة من اللحظات التي وثقناها بعدستنا.",
+                    why_eyebrow: "Why OMS Studio",
+                    why_title: "ماذا ستحصل عليه عند التصوير معنا؟",
+                    why_subtitle:
+                        "نحرص على أن تكون التجربة مريحة والنتيجة متقنة، لأن الصور الناجحة تبدأ من الثقة والتفاصيل الصغيرة.",
+                    benefit_1: "أسلوب تصوير احترافي وإبداعي",
+                    benefit_2: "صور معدّلة بجودة عالية",
+                    benefit_3: "جلسة مريحة وتجربة ممتعة",
+                    benefit_4: "اهتمام بالتفاصيل",
+                    benefit_5: "خدمة مرنة وشخصية",
+                    benefit_6: "تسليم منظم وفي الوقت المناسب",
+                    archive_eyebrow: "OMS Studio Archive",
+                    archive_title: "شاهد المزيد في الأرشيف الكامل",
+                    archive_desc:
+                        "استكشف مجموعة أوسع من الصور والفيديوهات، وتصفّح الأعمال المصنفة في صفحة واحدة مرتبة وسهلة الوصول.",
+                    archive_cta: "تصفح الأرشيف",
+                    clients_title: "عملاء وثقوا بنا",
+                    clients_subtitle: "بعض الجهات التي سعدنا بالعمل معها",
+                    contact_title: "دعنا نصنع الإبداع معاً",
+                    contact_subtitle: "تواصل معنا عبر القناة المناسبة لك",
+                    whatsapp_label: "واتساب",
+                    popup_title: "احجز جلستك",
+                    popup_desc: "اختر طريقة التواصل المناسبة لك",
+                    popup_whatsapp: "تواصل عبر واتساب",
+                    popup_whatsapp_sub: "ابدأ محادثة مباشرة معنا",
+                    popup_instagram: "زور حسابنا في إنستغرام",
+                    popup_email: "راسلنا عبر البريد الإلكتروني",
+                    footer: "© 2026 OMS Studio. جميع الحقوق محفوظة.",
+                },
+                en: {
+                    nav_home: "Home",
+                    nav_about: "About",
+                    nav_services: "Services",
+                    nav_works: "Works",
+                    nav_archive: "Archive",
+                    nav_clients: "Clients",
+                    nav_contact: "Contact",
+                    book_btn: "Book Session",
+                    hero_label: "Photography Studio",
+                    hero_title: "We are OMS Studio",
+                    hero_desc: "Turning meaningful moments into timeless images.",
+                    hero_cta: "View Our Work",
+                    about_eyebrow: "About OMS Studio",
+                    about_title: "Hi, I'm Omar, the founder of OMS Studio",
+                    about_text:
+                        "I believe a beautiful photograph is more than a picture; it is a memory that preserves the feeling and details of a moment. At OMS Studio, I create relaxed and thoughtful photography experiences for individuals, families and brands, with images that feel natural, polished and true to your story.",
+                    about_quote: "Every image should feel personal, polished and timeless.",
+                    about_note:
+                        "From the first idea to final delivery, every detail is handled with care so the experience stays simple and the results feel unmistakably yours.",
+                    services_eyebrow: "Photography Services",
+                    services_title: "My Photography Services",
+                    services_subtitle:
+                        "Photography experiences created around your story and needs.",
+                    service_events: "Events & Corporate Photography",
+                    service_children: "Children's Photography",
+                    service_portraits: "Portrait Photography",
+                    service_fashion: "Fashion & Commercial Photography",
+                    service_weddings: "Wedding Photography",
+                    service_personal: "Personal Photography",
+                    selected_works: "Selected Works",
+                    works_subtitle: "A curated selection of moments captured through our lens.",
+                    why_eyebrow: "Why OMS Studio",
+                    why_title: "What do you receive when you work with us?",
+                    why_subtitle:
+                        "We focus on a comfortable experience and a polished result, because great photographs begin with trust and attention to detail.",
+                    benefit_1: "Professional and creative photography",
+                    benefit_2: "High-quality edited images",
+                    benefit_3: "A comfortable, enjoyable session",
+                    benefit_4: "Attention to every detail",
+                    benefit_5: "Flexible, personalized service",
+                    benefit_6: "Organized and timely delivery",
+                    archive_eyebrow: "OMS Studio Archive",
+                    archive_title: "Explore more in the full archive",
+                    archive_desc:
+                        "Discover a wider collection of photographs and videos in a dedicated archive that is organized and easy to explore.",
+                    archive_cta: "Explore Archive",
+                    clients_title: "Clients We've Worked With",
+                    clients_subtitle: "A selection of clients we have been pleased to work with",
+                    contact_title: "Let's Create Together",
+                    contact_subtitle: "Reach us through your preferred channel",
+                    whatsapp_label: "WhatsApp",
+                    popup_title: "Book Your Session",
+                    popup_desc: "Choose the contact method that suits you",
+                    popup_whatsapp: "Chat with us on WhatsApp",
+                    popup_whatsapp_sub: "Start a direct conversation with us",
+                    popup_instagram: "Visit our Instagram",
+                    popup_email: "Email us",
+                    footer: "© 2026 OMS Studio. All rights reserved.",
+                },
             };
-
-            if (image.complete) {
-                markAsLoaded();
-            } else {
-                image.addEventListener("load", markAsLoaded, { once: true });
-                image.addEventListener("error", markAsLoaded, { once: true });
+            /* تغيير اتجاه الصفحة والنصوص بين العربية والإنجليزية */
+            let currentLang = "ar";
+            const htmlRoot = document.getElementById("html-root");
+            function applyLanguage(lang) {
+                currentLang = lang;
+                htmlRoot.lang = lang;
+                htmlRoot.dir = lang === "ar" ? "rtl" : "ltr";
+                document.getElementById("langToggle").textContent = lang === "ar" ? "EN" : "عربي";
+                document.getElementById("mobileLangToggle").textContent =
+                    lang === "ar" ? "EN" : "عربي";
+                document.querySelectorAll("[data-i18n]").forEach((el) => {
+                    const key = el.dataset.i18n;
+                    if (translations[lang][key]) el.textContent = translations[lang][key];
+                });
+                renderGalleries();
             }
-        });
+            document.getElementById("langToggle").onclick = () =>
+                applyLanguage(currentLang === "ar" ? "en" : "ar");
+            document.getElementById("mobileLangToggle").onclick = () =>
+                applyLanguage(currentLang === "ar" ? "en" : "ar");
 
-        /* ظهور تدريجي عند النزول */
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add("is-visible");
-                    revealObserver.unobserve(entry.target);
+            /* ==========================================================
+               مجلدات صور الأعمال
+               لكل تصنيف 6 صور مرقمة من 01 إلى 06.
+               لإضافة تصنيف جديد: أنشئ مجلد جديد، ثم أضف اسمه هنا،
+               وبعدها أضف عنصر gallery-category داخل قسم #works.
+               ========================================================== */
+            const galleryFolders = {
+                "events-corporate": "events-corporate",
+                children: "children",
+                portraits: "portraits",
+                "fashion-commercial": "fashion-commercial",
+                weddings: "weddings",
+                personal: "personal",
+            };
+            /* إنشاء بطاقات صور الأعمال تلقائياً بدل تكرار HTML يدوياً */
+            function renderGalleries() {
+                document.querySelectorAll(".gallery-category").forEach((category) => {
+                    const folder = galleryFolders[category.dataset.gallery],
+                        title =
+                            currentLang === "ar"
+                                ? category.dataset.titleAr
+                                : category.dataset.titleEn;
+                    category.innerHTML = `<div class="section-divider"><span class="section-divider-title">${title}</span></div><div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">${Array.from(
+                        { length: 6 },
+                        (_, i) => {
+                            const n = String(i + 1).padStart(2, "0"),
+                                src = `assets/works/${folder}/${folder}-${n}.jpg`;
+                            return `<button type="button" class="gallery-frame scroll-reveal rounded-xl md:rounded-2xl" data-full-src="${src}" aria-label="${title} ${i + 1}"><img loading="lazy" decoding="async" src="${src}" alt="${title} ${i + 1}"><span class="zoom-badge"><i class="fa-solid fa-magnifying-glass"></i></span><span class="fallback-label">${title}<br>${currentLang === "ar" ? "أضف الصورة في المسار المحدد" : "Add image to the configured path"}</span></button>`;
+                        },
+                    ).join("")}</div>`;
+                });
+                bindImages();
+                bindLightbox();
+                revealAll();
+            }
+            /* إظهار الصور بعد اكتمال تحميلها ومعالجة الملفات غير الموجودة */
+            function bindImages() {
+                document.querySelectorAll(".gallery-frame img,.image-frame img").forEach((img) => {
+                    const frame = img.closest(".gallery-frame,.image-frame");
+                    const ok = () => frame.classList.add("is-loaded");
+                    const fail = () => {
+                        frame.classList.add("is-loaded", "has-error");
+                    };
+                    if (img.complete) {
+                        img.naturalWidth ? ok() : fail();
+                    } else {
+                        img.addEventListener("load", ok, { once: true });
+                        img.addEventListener("error", fail, { once: true });
+                    }
+                });
+            }
+            /* فتح الصورة المختارة في نافذة كبيرة */
+            const lightbox = document.getElementById("lightbox"),
+                lightboxImage = document.getElementById("lightboxImage");
+            function bindLightbox() {
+                document.querySelectorAll(".gallery-frame").forEach(
+                    (btn) =>
+                        (btn.onclick = () => {
+                            if (btn.classList.contains("has-error")) return;
+                            lightboxImage.src = btn.dataset.fullSrc;
+                            lightbox.classList.add("is-open");
+                            lightbox.setAttribute("aria-hidden", "false");
+                            document.body.style.overflow = "hidden";
+                        }),
+                );
+            }
+            function closeLightbox() {
+                lightbox.classList.remove("is-open");
+                lightbox.setAttribute("aria-hidden", "true");
+                lightboxImage.src = "";
+                document.body.style.overflow = "";
+            }
+            document.getElementById("lightboxClose").onclick = closeLightbox;
+            lightbox.onclick = (e) => {
+                if (e.target === lightbox) closeLightbox();
+            };
+            /* مراقبة العناصر وإظهارها تدريجياً عند الوصول إليها */
+            function revealAll() {
+                const obs = new IntersectionObserver(
+                    (entries) =>
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add("is-visible");
+                                obs.unobserve(entry.target);
+                            }
+                        }),
+                    { threshold: 0.1 },
+                );
+                document.querySelectorAll(".scroll-reveal").forEach((el, i) => {
+                    el.style.transitionDelay = `${Math.min(i % 3, 2) * 80}ms`;
+                    obs.observe(el);
+                });
+            }
+            renderGalleries();
+
+            /* انتقال ناعم إلى الأقسام الداخلية بدون إعادة تحميل الصفحة */
+            document.querySelectorAll(".internal-link").forEach((link) =>
+                link.addEventListener("click", (e) => {
+                    const targetId = link.getAttribute("href");
+                    if (!targetId || !targetId.startsWith("#")) return;
+                    const target = document.querySelector(targetId);
+                    if (!target) return;
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: "smooth", block: "start" });
+                    document.getElementById("mobileMenu").classList.add("hidden");
+                }),
+            );
+            /* فتح وإغلاق قائمة الجوال */
+            const mobileMenu = document.getElementById("mobileMenu");
+            document.getElementById("mobileMenuBtn").onclick = () =>
+                mobileMenu.classList.toggle("hidden");
+            /* إضافة خلفية داكنة للقائمة العلوية بعد النزول */
+            const mainNav = document.getElementById("mainNav");
+            const updateNavbar = () =>
+                mainNav.classList.toggle("nav-scrolled", window.scrollY > 40);
+            updateNavbar();
+            window.addEventListener("scroll", updateNavbar);
+            /* فتح وإغلاق نافذة الحجز */
+            const popup = document.getElementById("contactPopup");
+            function openPopup() {
+                popup.classList.add("is-open");
+                popup.setAttribute("aria-hidden", "false");
+                document.body.style.overflow = "hidden";
+            }
+            function closePopup() {
+                popup.classList.remove("is-open");
+                popup.setAttribute("aria-hidden", "true");
+                document.body.style.overflow = "";
+            }
+            document
+                .querySelectorAll("[data-open-contact-popup]")
+                .forEach((btn) => (btn.onclick = openPopup));
+            document
+                .querySelectorAll("[data-close-contact-popup]")
+                .forEach((btn) => (btn.onclick = closePopup));
+            popup.onclick = (e) => {
+                if (e.target === popup) closePopup();
+            };
+            /* زر Escape يغلق نافذة الحجز أو نافذة تكبير الصور */
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") {
+                    closePopup();
+                    closeLightbox();
                 }
             });
-        }, { threshold: 0.12 });
-
-        document.querySelectorAll(".scroll-reveal").forEach((element, index) => {
-            element.style.transitionDelay = `${Math.min(index % 4, 3) * 90}ms`;
-            revealObserver.observe(element);
-        });
-
-
-        /* فتح وإغلاق نافذة الحجز */
-        const contactPopup = document.getElementById("contactPopup");
-        const popupOpenButtons = document.querySelectorAll("[data-open-contact-popup]");
-        const popupCloseButtons = document.querySelectorAll("[data-close-contact-popup]");
-
-        const openContactPopup = () => {
-            contactPopup.classList.add("is-open");
-            contactPopup.setAttribute("aria-hidden", "false");
-            document.body.style.overflow = "hidden";
-        };
-
-        const closeContactPopup = () => {
-            contactPopup.classList.remove("is-open");
-            contactPopup.setAttribute("aria-hidden", "true");
-            document.body.style.overflow = "";
-        };
-
-        popupOpenButtons.forEach((button) => {
-            button.addEventListener("click", openContactPopup);
-        });
-
-        popupCloseButtons.forEach((button) => {
-            button.addEventListener("click", closeContactPopup);
-        });
-
-        contactPopup.addEventListener("click", (event) => {
-            if (event.target === contactPopup) {
-                closeContactPopup();
-            }
-        });
-
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape" && contactPopup.classList.contains("is-open")) {
-                closeContactPopup();
-            }
-        });
-
-        /* خلفية الشريط العلوي بعد النزول */
-        const updateNavbar = () => {
-            mainNav.classList.toggle("nav-scrolled", window.scrollY > 40);
-        };
-
-        updateNavbar();
-        window.addEventListener("scroll", updateNavbar);
-    </script>
-</body>
+        </script>
+    </body>
 </html>
