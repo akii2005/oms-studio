@@ -165,8 +165,8 @@
                 margin-bottom: 22px;
             }
             .popup-brand-logo {
-                width: 150px;
-                margin-bottom: 12px;
+                width: 180px;
+                margin-bottom: 16px;
             }
 
             /* خلفية القائمة العلوية بعد النزول من الشاشة الرئيسية */
@@ -500,10 +500,10 @@
                 visibility: visible;
             }
             .contact-popup-panel {
-                width: min(100%, 460px);
-                border-radius: 24px;
+                width: min(100%, 560px);
+                border-radius: 28px;
                 background: #fff;
-                padding: 28px;
+                padding: 34px;
                 box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
                 transform: translateY(18px) scale(0.98);
                 transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
@@ -511,13 +511,33 @@
             .contact-popup-backdrop.is-open .contact-popup-panel {
                 transform: translateY(0) scale(1);
             }
+            .contact-popup-panel .popup-eyebrow {
+                font-size: 0.92rem;
+                letter-spacing: 0.22em;
+                font-weight: 700;
+                margin-bottom: 10px;
+            }
+            .contact-popup-panel .popup-title {
+                font-size: 2.4rem;
+                line-height: 1.35;
+                font-weight: 800;
+                color: #111827;
+            }
+            .contact-popup-panel .popup-desc {
+                font-size: 1.18rem;
+                color: #6b7280;
+                margin-top: 10px;
+                line-height: 1.9;
+                font-weight: 500;
+            }
             .contact-link-card {
                 display: flex;
                 align-items: center;
-                gap: 14px;
+                justify-content: space-between;
+                gap: 18px;
                 border: 1px solid #e5e7eb;
-                border-radius: 16px;
-                padding: 14px;
+                border-radius: 20px;
+                padding: 20px 22px;
                 transition: 0.75s cubic-bezier(0.22, 1, 0.36, 1);
             }
             .contact-link-card:hover {
@@ -525,9 +545,24 @@
                 border-color: #cbd5e1;
                 box-shadow: 0 10px 22px rgba(0, 0, 0, 0.07);
             }
+            .contact-link-card .contact-primary {
+                display: block;
+                font-size: 1.28rem;
+                font-weight: 800;
+                line-height: 1.65;
+                color: #111827;
+            }
+            .contact-link-card .contact-secondary {
+                display: block;
+                margin-top: 4px;
+                font-size: 1rem;
+                color: #6b7280;
+                line-height: 1.7;
+                font-weight: 500;
+            }
             .contact-icon {
-                width: 42px;
-                height: 42px;
+                width: 58px;
+                height: 58px;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
@@ -535,6 +570,33 @@
                 border-radius: 999px;
                 background: #f3f4f6;
                 color: #111827;
+                font-size: 1.45rem;
+            }
+            .contact-popup-panel [data-close-contact-popup] {
+                width: 46px;
+                height: 46px;
+                font-size: 1.5rem;
+            }
+            @media (max-width: 640px) {
+                .contact-popup-panel {
+                    width: min(100%, 94vw);
+                    padding: 26px;
+                }
+                .contact-popup-panel .popup-title {
+                    font-size: 2rem;
+                }
+                .contact-popup-panel .popup-desc {
+                    font-size: 1.06rem;
+                }
+                .contact-link-card {
+                    padding: 16px 18px;
+                }
+                .contact-link-card .contact-primary {
+                    font-size: 1.14rem;
+                }
+                .contact-link-card .contact-secondary {
+                    font-size: 0.95rem;
+                }
             }
             .footer-contact-link {
                 display: inline-flex;
@@ -1203,17 +1265,17 @@
                             alt="OMS Studio"
                             class="brand-logo popup-brand-logo"
                         />
-                        <p class="text-xs text-gray-400 tracking-[.24em] uppercase mb-2">
+                        <p class="popup-eyebrow text-xs text-gray-400 tracking-[.24em] uppercase mb-2">
                             OMS Studio
                         </p>
                         <h2
                             id="contactPopupTitle"
                             data-i18n="popup_title"
-                            class="text-2xl font-bold"
+                            class="popup-title text-2xl font-bold"
                         >
                             احجز جلستك
                         </h2>
-                        <p data-i18n="popup_desc" class="text-sm text-gray-500 mt-2">
+                        <p data-i18n="popup_desc" class="popup-desc text-sm text-gray-500 mt-2">
                             اختر طريقة التواصل المناسبة لك
                         </p>
                     </div>
@@ -1234,11 +1296,11 @@
                         class="contact-link-card"
                         ><span class="contact-icon"><i class="fa-brands fa-whatsapp"></i></span
                         ><span
-                            ><span data-i18n="popup_whatsapp" class="block text-sm font-bold"
+                            ><span data-i18n="popup_whatsapp" class="contact-primary block text-sm font-bold"
                                 >تواصل عبر واتساب</span
                             ><span
                                 data-i18n="popup_whatsapp_sub"
-                                class="block text-xs text-gray-500 mt-1"
+                                class="contact-secondary block text-xs text-gray-500 mt-1"
                                 >ابدأ محادثة مباشرة معنا</span
                             ></span
                         ></a
@@ -1250,17 +1312,17 @@
                         class="contact-link-card"
                         ><span class="contact-icon"><i class="fa-brands fa-instagram"></i></span
                         ><span
-                            ><span data-i18n="popup_instagram" class="block text-sm font-bold"
+                            ><span data-i18n="popup_instagram" class="contact-primary block text-sm font-bold"
                                 >زور حسابنا في إنستغرام</span
-                            ><span class="block text-xs text-gray-500 mt-1">om1sf</span></span
+                            ><span class="contact-secondary block text-xs text-gray-500 mt-1">om1sf</span></span
                         ></a
                     >
                     <a href="mailto:studiooms3@gmail.com" class="contact-link-card"
                         ><span class="contact-icon"><i class="fa-regular fa-envelope"></i></span
                         ><span
-                            ><span data-i18n="popup_email" class="block text-sm font-bold"
+                            ><span data-i18n="popup_email" class="contact-primary block text-sm font-bold"
                                 >راسلنا عبر البريد الإلكتروني</span
-                            ><span class="block text-xs text-gray-500 mt-1"
+                            ><span class="contact-secondary block text-xs text-gray-500 mt-1"
                                 >studiooms3@gmail.com</span
                             ></span
                         ></a
