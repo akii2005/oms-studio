@@ -49,7 +49,7 @@
                 font-family: "SaudiWeb", "IBM Plex Sans Arabic", "Tajawal", sans-serif;
                 background: #fff;
                 color: #111827;
-                font-size: 17px;
+                font-size: 19px;
             }
             html[dir="rtl"] .font-serif-en {
                 font-family: "SaudiWeb", "IBM Plex Sans Arabic", sans-serif;
@@ -67,38 +67,73 @@
                 scroll-margin-top: 86px;
             }
 
-            /* تكبير الخطوط قليلاً مع الحفاظ على تناسق التصميم */
+            /* تكبير الخطوط بشكل أوضح مع الحفاظ على تناسق التصميم */
             p,
             .showreel-desc,
-            .archive-banner p {
-                font-size: 1.04rem;
+            .archive-banner p,
+            .text-gray-500,
+            .text-gray-600,
+            .text-gray-400 {
+                font-size: 1.16rem;
+                line-height: 2.05;
             }
             nav a {
-                font-size: 0.92rem;
+                font-size: 1rem;
             }
             .service-card h3,
             .benefit-card h3 {
-                font-size: 1.08rem;
-                line-height: 1.8;
+                font-size: 1.25rem;
+                line-height: 1.9;
             }
             .section-divider-title {
-                font-size: 0.86rem;
+                font-size: 1.1rem !important;
+                padding: 13px 28px;
+                letter-spacing: 0.04em;
+                line-height: 1.7;
             }
             #works > div:first-child p,
             #services p,
             #clients p {
-                font-size: 1.08rem;
+                font-size: 1.18rem;
+            }
+            #works h2,
+            #services h2,
+            #why-us h2,
+            #contact h2 {
+                font-size: clamp(2.65rem, 5vw, 4rem);
+                line-height: 1.35;
+            }
+            .showreel-title {
+                font-size: clamp(2.25rem, 4.8vw, 3.6rem);
+            }
+            .showreel-label {
+                font-size: 0.92rem;
+            }
+            .showreel-note {
+                font-size: 1rem;
+            }
+            .contact-link-card,
+            .footer-contact-link {
+                font-size: 1.05rem;
             }
             @media (max-width: 640px) {
                 body {
-                    font-size: 16px;
+                    font-size: 17.5px;
                 }
                 nav a {
-                    font-size: 0.9rem;
+                    font-size: 0.98rem;
+                }
+                .section-divider-title {
+                    font-size: 1rem !important;
+                    padding: 11px 18px;
+                }
+                .service-card h3,
+                .benefit-card h3 {
+                    font-size: 1.15rem;
                 }
             }
 
-            /* ==========================================================
+/* ==========================================================
                2) مقاسات شعارات OMS Studio
                توجد نسختان من الشعار داخل assets/branding:
                - oms-studio-champagne-gold.png للخلفيات الداكنة
@@ -158,12 +193,12 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                padding: 10px 20px;
+                padding: 13px 28px;
                 border: 1px solid #d1d5db;
                 border-radius: 999px;
                 background: #fff;
                 color: #1f2937;
-                font-size: 0.78rem;
+                font-size: 1.1rem;
                 font-weight: 700;
                 letter-spacing: 0.08em;
                 text-align: center;
