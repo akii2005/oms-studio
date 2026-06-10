@@ -7,7 +7,7 @@
 
         <script src="https://cdn.tailwindcss.com"></script>
         <link
-            href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
             rel="stylesheet"
         />
         <link
@@ -31,14 +31,17 @@
                 scroll-behavior: auto;
             }
             body {
-                font-family: "Alexandria", sans-serif;
+                font-family: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
                 background: #fff;
                 color: #111827;
             }
-            html[dir="ltr"] body {
-                font-family: "Alexandria", sans-serif;
+            html[dir="rtl"] .font-serif-en {
+                font-family: "Noto Kufi Arabic", "IBM Plex Sans Arabic", sans-serif;
             }
-            .font-serif-en {
+            html[dir="ltr"] body {
+                font-family: "Inter", sans-serif;
+            }
+            html[dir="ltr"] .font-serif-en {
                 font-family: "Playfair Display", serif;
             }
             section,
@@ -245,6 +248,88 @@
             .scroll-reveal.is-visible {
                 opacity: 1;
                 transform: translateY(0);
+            }
+
+            /* ==========================================================
+               4) فيديو نماذج العمل
+               ضع ملف الفيديو داخل:
+               assets/videos/oms-showreel.mp4
+               ========================================================== */
+            .showreel-card {
+                position: relative;
+                overflow: hidden;
+                border-radius: 30px;
+                background: #0f0f0f;
+                border: 1px solid rgba(17, 24, 39, 0.08);
+                box-shadow: 0 24px 65px rgba(0, 0, 0, 0.12);
+            }
+            .showreel-video-wrap {
+                position: relative;
+                aspect-ratio: 16/9;
+                overflow: hidden;
+                background:
+                    linear-gradient(135deg, rgba(0,0,0,.82), rgba(0,0,0,.42)),
+                    #111;
+            }
+            .showreel-video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+            .showreel-content {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 22px;
+                align-items: center;
+                padding: 28px;
+                background: linear-gradient(135deg, #fff, #f8fafc);
+            }
+            .showreel-label {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                width: fit-content;
+                padding: 9px 15px;
+                border-radius: 999px;
+                background: #111;
+                color: #fff;
+                font-size: 0.72rem;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+            }
+            .showreel-title {
+                margin-top: 16px;
+                font-size: clamp(1.9rem, 4vw, 3.1rem);
+                line-height: 1.35;
+                font-weight: 700;
+                color: #111827;
+            }
+            .showreel-desc {
+                margin-top: 14px;
+                color: #6b7280;
+                line-height: 2;
+                max-width: 780px;
+            }
+            .showreel-note {
+                margin-top: 18px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                color: #4b5563;
+                font-size: 0.86rem;
+            }
+            .showreel-note span {
+                border: 1px solid #e5e7eb;
+                border-radius: 999px;
+                padding: 8px 12px;
+                background: #fff;
+            }
+            @media (min-width: 900px) {
+                .showreel-content {
+                    grid-template-columns: 0.95fr 1.05fr;
+                    padding: 34px;
+                }
             }
 
             /* ==========================================================
@@ -721,11 +806,48 @@
             ></div>
             <div
                 id="gallery-events"
-                class="mb-8 gallery-category"
+                class="mb-16 gallery-category"
                 data-gallery="events-corporate"
                 data-title-ar="الفعاليات والتصوير المؤسسي"
                 data-title-en="Events & Corporate Photography"
             ></div>
+
+            <div id="showreel" class="showreel-card scroll-reveal mb-4">
+                <div class="showreel-video-wrap">
+                    <video
+                        class="showreel-video"
+                        controls
+                        playsinline
+                        preload="metadata"
+                        poster="assets/hero/oms-home-hero.jpg"
+                    >
+                        <source src="assets/videos/oms-showreel.mp4" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="showreel-content">
+                    <div>
+                        <span data-i18n="showreel_label" class="showreel-label">
+                            <i class="fa-regular fa-circle-play"></i>
+                            نماذج من أعمالنا
+                        </span>
+                        <h3 data-i18n="showreel_title" class="showreel-title font-serif-en">
+                            لحظات مختارة من تغطياتنا
+                        </h3>
+                    </div>
+                    <div>
+                        <p data-i18n="showreel_desc" class="showreel-desc">
+                            فيديو قصير يجمع لقطات من أسلوبنا في التصوير، من تفاصيل الفعاليات إلى
+                            اللحظات العفوية، ليعطيك فكرة أوضح عن جودة العمل وتجربة OMS Studio.
+                        </p>
+                        <div class="showreel-note">
+                            <span data-i18n="showreel_tag_1">لقطات واقعية</span>
+                            <span data-i18n="showreel_tag_2">تغطية احترافية</span>
+                            <span data-i18n="showreel_tag_3">إحساس بصري هادئ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- ==========================================================
@@ -1128,6 +1250,13 @@
                     service_personal: "Personal Photography",
                     selected_works: "Selected Works",
                     works_subtitle: "A curated selection of moments captured through our lens.",
+                    showreel_label: "Work Highlights",
+                    showreel_title: "Selected moments from our coverage",
+                    showreel_desc:
+                        "A short film featuring samples of our photography style, from event details to natural moments, giving you a clearer feel for the quality and experience of OMS Studio.",
+                    showreel_tag_1: "Real moments",
+                    showreel_tag_2: "Professional coverage",
+                    showreel_tag_3: "Calm visual style",
                     why_eyebrow: "Why OMS Studio",
                     why_title: "What do you receive when you work with us?",
                     why_subtitle:
