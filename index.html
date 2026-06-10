@@ -275,6 +275,7 @@
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                border: 0;
                 display: block;
             }
             .showreel-content {
@@ -814,16 +815,14 @@
 
             <div id="showreel" class="showreel-card scroll-reveal mb-4">
                 <div class="showreel-video-wrap">
-                    <video
+                    <iframe
                         class="showreel-video"
-                        controls
-                        playsinline
-                        preload="metadata"
-                        poster="assets/hero/oms-home-hero.jpg"
-                    >
-                        <source src="assets/videos/oms-showreel.mp4" type="video/mp4" />
-                        Your browser does not support the video tag.
-                    </video>
+                        src="https://drive.google.com/file/d/13V7FoP_M4qPM0jqZ_TuER_PEa_HAzq58/preview"
+                        allow="autoplay; fullscreen"
+                        allowfullscreen
+                        loading="lazy"
+                        title="OMS Studio Showreel"
+                    ></iframe>
                 </div>
                 <div class="showreel-content">
                     <div>
@@ -845,6 +844,13 @@
                             <span data-i18n="showreel_tag_2">تغطية احترافية</span>
                             <span data-i18n="showreel_tag_3">إحساس بصري هادئ</span>
                         </div>
+                        <a
+                            href="https://drive.google.com/file/d/13V7FoP_M4qPM0jqZ_TuER_PEa_HAzq58/view?usp=sharing"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-i18n="showreel_drive_cta"
+                            class="inline-flex mt-6 items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-bold text-white hover:bg-gray-800 transition"
+                        >فتح الفيديو في Google Drive</a>
                     </div>
                 </div>
             </div>
@@ -1257,6 +1263,7 @@
                     showreel_tag_1: "Real moments",
                     showreel_tag_2: "Professional coverage",
                     showreel_tag_3: "Calm visual style",
+                    showreel_drive_cta: "Open video in Google Drive",
                     why_eyebrow: "Why OMS Studio",
                     why_title: "What do you receive when you work with us?",
                     why_subtitle:
