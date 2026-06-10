@@ -570,6 +570,57 @@
                 line-height: 1;
                 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
             }
+
+            /* تكبير قوي جداً لقسم عني - أوضح للقراءة */
+            #about {
+                font-size: 22px !important;
+            }
+            #about .soft-panel {
+                padding: 52px !important;
+            }
+            #about h2 {
+                font-size: clamp(3rem, 5.6vw, 4.7rem) !important;
+                line-height: 1.38 !important;
+                font-weight: 700 !important;
+                letter-spacing: 0 !important;
+            }
+            #about h3 {
+                font-size: clamp(3.1rem, 5.9vw, 5rem) !important;
+                line-height: 1.38 !important;
+                font-weight: 700 !important;
+                letter-spacing: 0 !important;
+            }
+            #about p {
+                font-size: 1.55rem !important;
+                line-height: 2.35 !important;
+                font-weight: 400 !important;
+            }
+            #about .text-xs,
+            #about [data-i18n="about_eyebrow"] {
+                font-size: 1.05rem !important;
+                letter-spacing: 0.2em !important;
+                font-weight: 700 !important;
+            }
+            #about .section-brand-logo {
+                width: min(60vw, 310px) !important;
+                margin-bottom: 28px !important;
+            }
+            @media (max-width: 768px) {
+                #about .soft-panel {
+                    padding: 34px !important;
+                }
+                #about h2 {
+                    font-size: 2.45rem !important;
+                }
+                #about h3 {
+                    font-size: 2.55rem !important;
+                }
+                #about p {
+                    font-size: 1.22rem !important;
+                    line-height: 2.15 !important;
+                }
+            }
+
         </style>
     </head>
     <body class="text-gray-900 antialiased">
@@ -750,11 +801,11 @@
                     </p>
                     <h2
                         data-i18n="about_title"
-                        class="text-3xl md:text-4xl font-bold leading-tight mb-6"
+                        class="font-bold leading-tight mb-6"
                     >
                         أنا عمر، مؤسس OMS Studio
                     </h2>
-                    <p data-i18n="about_text" class="text-gray-600 leading-8 text-sm md:text-base">
+                    <p data-i18n="about_text" class="text-gray-600">
                         أؤمن أن الصورة الجميلة ليست مجرد لقطة، بل ذكرى تحمل إحساس اللحظة وتفاصيلها.
                         في OMS Studio أقدّم تجربة تصوير مريحة ومدروسة للأفراد والعائلات والعلامات
                         التجارية، بهدف صناعة صور أنيقة وطبيعية تحكي قصتكم بأسلوب يليق بكم.
@@ -768,11 +819,11 @@
                     />
                     <h3
                         data-i18n="about_quote"
-                        class="text-3xl md:text-5xl font-serif-en leading-tight text-gray-900"
+                        class="font-serif-en leading-tight text-gray-900"
                     >
                         Every image should feel personal, polished and timeless.
                     </h3>
-                    <p data-i18n="about_note" class="mt-6 text-gray-500 leading-8">
+                    <p data-i18n="about_note" class="mt-8 text-gray-500">
                         نهتم بالتفاصيل من أول فكرة إلى تسليم الصور النهائية، مع الحفاظ على تجربة
                         سلسة ونتيجة تعبّر عنكم.
                     </p>
