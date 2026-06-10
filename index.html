@@ -675,6 +675,32 @@
                 }
             }
 
+        
+            /* ترتيب نافذة الحجز من اليمين إلى اليسار */
+            .contact-popup-panel {
+                direction: rtl;
+                text-align: right;
+            }
+            .contact-popup-panel > .flex {
+                flex-direction: row-reverse;
+            }
+            .contact-popup-panel .popup-eyebrow,
+            .contact-popup-panel .popup-title,
+            .contact-popup-panel .popup-desc {
+                text-align: right;
+            }
+            .contact-link-card {
+                flex-direction: row-reverse;
+                text-align: right;
+            }
+            .contact-copy {
+                flex: 1;
+                text-align: right;
+            }
+            .contact-secondary {
+                direction: ltr;
+                unicode-bidi: plaintext;
+            }
         </style>
     </head>
     <body class="text-gray-900 antialiased">
@@ -1295,7 +1321,7 @@
                         rel="noopener noreferrer"
                         class="contact-link-card"
                         ><span class="contact-icon"><i class="fa-brands fa-whatsapp"></i></span
-                        ><span
+                        ><span class="contact-copy"
                             ><span data-i18n="popup_whatsapp" class="contact-primary block text-sm font-bold"
                                 >تواصل عبر واتساب</span
                             ><span
@@ -1311,7 +1337,7 @@
                         rel="noopener noreferrer"
                         class="contact-link-card"
                         ><span class="contact-icon"><i class="fa-brands fa-instagram"></i></span
-                        ><span
+                        ><span class="contact-copy"
                             ><span data-i18n="popup_instagram" class="contact-primary block text-sm font-bold"
                                 >زور حسابنا في إنستغرام</span
                             ><span class="contact-secondary block text-xs text-gray-500 mt-1">om1sf</span></span
@@ -1319,7 +1345,7 @@
                     >
                     <a href="mailto:studiooms3@gmail.com" class="contact-link-card"
                         ><span class="contact-icon"><i class="fa-regular fa-envelope"></i></span
-                        ><span
+                        ><span class="contact-copy"
                             ><span data-i18n="popup_email" class="contact-primary block text-sm font-bold"
                                 >راسلنا عبر البريد الإلكتروني</span
                             ><span class="contact-secondary block text-xs text-gray-500 mt-1"
