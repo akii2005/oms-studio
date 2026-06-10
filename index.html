@@ -128,14 +128,14 @@
             /* بطاقات شعارات العملاء */
             .client-logo-card {
                 transition:
-                    transform 0.28s ease,
-                    box-shadow 0.28s ease,
-                    border-color 0.28s ease;
+                    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+                    box-shadow 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+                    border-color 0.85s cubic-bezier(0.22, 1, 0.36, 1);
             }
             .service-card:hover,
             .benefit-card:hover,
             .client-logo-card:hover {
-                transform: translateY(-5px);
+                transform: translateY(-3px);
                 border-color: #d1d5db;
                 box-shadow: 0 16px 34px rgba(0, 0, 0, 0.08);
             }
@@ -161,8 +161,8 @@
                 z-index: 1;
                 background: linear-gradient(100deg, #eef0f2 20%, #fff 45%, #eef0f2 70%);
                 background-size: 220% 100%;
-                animation: imageShimmer 1.25s linear infinite;
-                transition: opacity 0.35s ease;
+                animation: imageShimmer 2.8s linear infinite;
+                transition: opacity 0.9s ease;
             }
             .gallery-frame img,
             .image-frame img {
@@ -172,8 +172,8 @@
                 opacity: 0;
                 transform: scale(1.025);
                 transition:
-                    opacity 0.65s ease,
-                    transform 0.75s ease;
+                    opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 2.2s cubic-bezier(0.22, 1, 0.36, 1);
             }
             .gallery-frame.is-loaded::before,
             .image-frame.is-loaded::before {
@@ -186,7 +186,7 @@
                 transform: scale(1);
             }
             .gallery-frame:hover img {
-                transform: scale(1.065);
+                transform: scale(1.035);
             }
             .gallery-frame .zoom-badge {
                 position: absolute;
@@ -201,7 +201,7 @@
                 color: #111827;
                 opacity: 0;
                 transform: translateY(5px);
-                transition: 0.25s ease;
+                transition: 0.75s cubic-bezier(0.22, 1, 0.36, 1);
             }
             .gallery-frame:hover .zoom-badge {
                 opacity: 1;
@@ -237,10 +237,10 @@
             /* ظهور تدريجي للعناصر عند النزول في الصفحة */
             .scroll-reveal {
                 opacity: 0;
-                transform: translateY(42px);
+                transform: translateY(70px);
                 transition:
-                    opacity 1.15s cubic-bezier(0.22, 1, 0.36, 1),
-                    transform 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+                    opacity 2.2s cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 2.2s cubic-bezier(0.16, 1, 0.3, 1);
             }
             .scroll-reveal.is-visible {
                 opacity: 1;
@@ -265,10 +265,10 @@
                 height: 100%;
                 object-fit: cover;
                 opacity: 0.43;
-                transition: transform 0.7s ease;
+                transition: transform 2.2s cubic-bezier(0.22, 1, 0.36, 1);
             }
             .archive-banner:hover .archive-banner-bg {
-                transform: scale(1.045);
+                transform: scale(1.02);
             }
             .archive-banner::after {
                 content: "";
@@ -317,8 +317,8 @@
                 opacity: 0;
                 visibility: hidden;
                 transition:
-                    opacity 0.3s ease,
-                    visibility 0.3s ease;
+                    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                    visibility 0.9s cubic-bezier(0.22, 1, 0.36, 1);
             }
             .contact-popup-backdrop.is-open,
             .lightbox-backdrop.is-open {
@@ -332,7 +332,7 @@
                 padding: 28px;
                 box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
                 transform: translateY(18px) scale(0.98);
-                transition: transform 0.3s ease;
+                transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
             }
             .contact-popup-backdrop.is-open .contact-popup-panel {
                 transform: translateY(0) scale(1);
@@ -344,7 +344,7 @@
                 border: 1px solid #e5e7eb;
                 border-radius: 16px;
                 padding: 14px;
-                transition: 0.25s ease;
+                transition: 0.75s cubic-bezier(0.22, 1, 0.36, 1);
             }
             .contact-link-card:hover {
                 transform: translateY(-2px);
@@ -366,7 +366,7 @@
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
-                transition: 0.25s ease;
+                transition: 0.75s cubic-bezier(0.22, 1, 0.36, 1);
             }
             .footer-contact-link:hover {
                 transform: translateY(-2px);
@@ -1027,7 +1027,7 @@
         <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <script>
             /* تفعيل حركات الظهور الجاهزة من مكتبة AOS */
-            AOS.init({ once: true, offset: 80, duration: 1100, easing: "ease-out-cubic" });
+            AOS.init({ once: true, offset: 90, duration: 1900, delay: 120, easing: "ease-out-cubic" });
             /* ==========================================================
                النصوص العربية والإنجليزية
                أي عنصر HTML يحمل data-i18n يأخذ نصه من هذا الكائن.
@@ -1279,12 +1279,31 @@
                     { threshold: 0.1 },
                 );
                 document.querySelectorAll(".scroll-reveal").forEach((el, i) => {
-                    el.style.transitionDelay = `${Math.min(i % 3, 2) * 140}ms`;
+                    el.style.transitionDelay = `${260 + Math.min(i % 3, 2) * 220}ms`;
                     obs.observe(el);
                 });
             }
             renderGalleries();
 
+            /* انتقال هادئ وبطيء بين الأقسام بدل السرعة الافتراضية */
+            function calmScrollTo(target) {
+                const navOffset = 82;
+                const startY = window.scrollY;
+                const endY = target.getBoundingClientRect().top + window.scrollY - navOffset;
+                const distance = endY - startY;
+                const duration = 1550;
+                let startTime = null;
+                function easeInOutCubic(t) {
+                    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                }
+                function animate(currentTime) {
+                    if (!startTime) startTime = currentTime;
+                    const progress = Math.min((currentTime - startTime) / duration, 1);
+                    window.scrollTo(0, startY + distance * easeInOutCubic(progress));
+                    if (progress < 1) requestAnimationFrame(animate);
+                }
+                requestAnimationFrame(animate);
+            }
             /* انتقال ناعم إلى الأقسام الداخلية بدون إعادة تحميل الصفحة */
             document.querySelectorAll(".internal-link").forEach((link) =>
                 link.addEventListener("click", (e) => {
@@ -1293,7 +1312,7 @@
                     const target = document.querySelector(targetId);
                     if (!target) return;
                     e.preventDefault();
-                    target.scrollIntoView({ behavior: "smooth", block: "start" });
+                    calmScrollTo(target);
                     document.getElementById("mobileMenu").classList.add("hidden");
                 }),
             );
