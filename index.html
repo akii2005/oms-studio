@@ -7,7 +7,7 @@
 
         <script src="https://cdn.tailwindcss.com"></script>
         <link
-            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
             rel="stylesheet"
         />
         <link
@@ -27,16 +27,33 @@
                 --soft: #f7f6f3;
                 --gold: #d6b476;
             }
+            @font-face {
+                font-family: "SaudiWeb";
+                src: url("assets/fonts/SaudiWeb-Regular.woff2") format("woff2");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
+            @font-face {
+                font-family: "SaudiWeb";
+                src: url("assets/fonts/SaudiWeb-Bold.woff2") format("woff2");
+                font-weight: 700;
+                font-style: normal;
+                font-display: swap;
+            }
+
             html {
                 scroll-behavior: auto;
             }
             body {
-                font-family: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
+                font-family: "SaudiWeb", "IBM Plex Sans Arabic", "Tajawal", sans-serif;
                 background: #fff;
                 color: #111827;
+                font-size: 17px;
             }
             html[dir="rtl"] .font-serif-en {
-                font-family: "Noto Kufi Arabic", "IBM Plex Sans Arabic", sans-serif;
+                font-family: "SaudiWeb", "IBM Plex Sans Arabic", sans-serif;
+                font-weight: 700;
             }
             html[dir="ltr"] body {
                 font-family: "Inter", sans-serif;
@@ -48,6 +65,37 @@
             header,
             footer {
                 scroll-margin-top: 86px;
+            }
+
+            /* تكبير الخطوط قليلاً مع الحفاظ على تناسق التصميم */
+            p,
+            .showreel-desc,
+            .archive-banner p {
+                font-size: 1.04rem;
+            }
+            nav a {
+                font-size: 0.92rem;
+            }
+            .service-card h3,
+            .benefit-card h3 {
+                font-size: 1.08rem;
+                line-height: 1.8;
+            }
+            .section-divider-title {
+                font-size: 0.86rem;
+            }
+            #works > div:first-child p,
+            #services p,
+            #clients p {
+                font-size: 1.08rem;
+            }
+            @media (max-width: 640px) {
+                body {
+                    font-size: 16px;
+                }
+                nav a {
+                    font-size: 0.9rem;
+                }
             }
 
             /* ==========================================================
@@ -844,13 +892,6 @@
                             <span data-i18n="showreel_tag_2">تغطية احترافية</span>
                             <span data-i18n="showreel_tag_3">إحساس بصري هادئ</span>
                         </div>
-                        <a
-                            href="https://drive.google.com/file/d/13V7FoP_M4qPM0jqZ_TuER_PEa_HAzq58/view?usp=sharing"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            data-i18n="showreel_drive_cta"
-                            class="inline-flex mt-6 items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-bold text-white hover:bg-gray-800 transition"
-                        >فتح الفيديو في Google Drive</a>
                     </div>
                 </div>
             </div>
@@ -1263,7 +1304,6 @@
                     showreel_tag_1: "Real moments",
                     showreel_tag_2: "Professional coverage",
                     showreel_tag_3: "Calm visual style",
-                    showreel_drive_cta: "Open video in Google Drive",
                     why_eyebrow: "Why OMS Studio",
                     why_title: "What do you receive when you work with us?",
                     why_subtitle:
